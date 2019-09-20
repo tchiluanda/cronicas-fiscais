@@ -1,0 +1,8 @@
+.nav-stepper ul {
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-stepper ul li {
+    margin: 0 10px;
+}
