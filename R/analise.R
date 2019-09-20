@@ -36,23 +36,30 @@ serie <- tabela %>%
     ac12m = ~zoo::rollapply(., width = 12, FUN = sum, fill = NA, align = 'right')))
 
 serie_bolhas <- serie %>%
-  filter(!is.na(DespTotal), Mes == 12) %>%
+  filter(!is.na(DespDiscr_ac12m), Mes == 12) %>%
   select(Periodo, DespDiscr_ac12m, DespObrig_ac12m) %>%
   mutate_at(vars(starts_with("Desp")), .funs = ~. - lag(.)) %>%
   rename(discricionaria = DespDiscr_ac12m,
          obrigatoria    = DespObrig_ac12m) %>%
-  gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_diferenca) %>%
-  filter(tipo_despesa == "DespDiscr")
+  gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_diferenca)
 
-serie_lines <- serie %>%
-  filter(!is.na(DespTotal)) %>%
+serie_acum <- serie %>%
+  filter(!is.na(DespDiscr_ac12m)) %>%
   select(Periodo, 
          discricionaria = DespDiscr_ac12m, 
          obrigatoria    = DespObrig_ac12m) %>%
-  gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_acumulado) %>%
-  filter(tipo_despesa == "DespDiscr")
+  arrange(Periodo)
+
+serie_variacao <- serie_acum %>%
+  mutate_at(vars(-Periodo), .funs = ~./.[1]) %>%
+  gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_variacao)
   
+serie_plot <- serie_variacao %>%
+  left_join(serie_bolhas) %>%
+  arrange(Periodo)
 
 ggplot(serie_plot, 
-       aes(x = Periodo, y = valor, color = tipo_despesa)) + 
-  geom_line()
+       aes(x = Periodo, y = valor_variacao, color = tipo_despesa)) + 
+  geom_line() +
+  geom_point(aes(size = valor_diferenca,
+                 color = valor_diferenca >= 0))
