@@ -64,7 +64,7 @@ serie_plot <- serie_variacao %>%
 
 
 
-ggplot(serie_plot, 
+plot_completo <- ggplot(serie_plot, 
        aes(x = Periodo, y = valor_variacao, color = tipo_despesa)) + 
   geom_line(size = 1) +
   geom_point(aes(size = abs(valor_diferenca),
@@ -74,6 +74,7 @@ ggplot(serie_plot,
   scale_size(range = c(5, 20)) +
   theme_minimal()
 
+ggsave(plot_completo, filename = "esboco_vis.png", type = "cairo-png")
 
 write.csv(serie_plot, file = "dados.csv")
                
