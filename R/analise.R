@@ -7,7 +7,7 @@ library(tidyverse)
 recurso_TT <- resource_show(id="527ccdb1-3059-42f3-bf23-b5e3ab4c6dc6",
                              url="https://apickan.tesouro.gov.br/ckan")
 download.file(recurso_TT$url, destfile = "./rtn.xlsx", mode = 'wb' )
-tabela <- read_excel("rtn.xlsx", sheet = "1.1-A", skip = 4)
+tabela <- read_excel("rtn.xlsx", sheet = "1.1", skip = 4)
 
 
 # processa dados ----------------------------------------------------------
@@ -50,16 +50,28 @@ serie_acum <- serie %>%
          obrigatoria    = DespObrig_ac12m) %>%
   arrange(Periodo)
 
+serie_valores <- serie_acum %>%
+  gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_acumulado)
+  
 serie_variacao <- serie_acum %>%
   mutate_at(vars(-Periodo), .funs = ~./.[1]) %>%
   gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_variacao)
   
 serie_plot <- serie_variacao %>%
   left_join(serie_bolhas) %>%
+  left_join(serie_valores) %>%
   arrange(Periodo)
+
+
 
 ggplot(serie_plot, 
        aes(x = Periodo, y = valor_variacao, color = tipo_despesa)) + 
   geom_line() +
-  geom_point(aes(size = valor_diferenca,
-                 color = valor_diferenca >= 0))
+  geom_point(aes(size = abs(valor_diferenca),
+                 fill = valor_diferenca >= 0), 
+             shape = 21, color = "white") +
+  geom_text(aes(label = round(valor_diferenca/1000,0)), size = 3, color = "white") +
+  scale_size(range = c(5, 20)) +
+  theme_minimal()
+
+               
