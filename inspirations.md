@@ -25,3 +25,9 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 # Forma:
 
 * https://archive.nytimes.com/www.nytimes.com/interactive/2012/05/17/business/dealbook/how-the-facebook-offering-compares.html?_r=0
+
+* http://arnicas.github.io/interactive-vis-course/Week12/stepper_buttons.html
+
+* http://arnicas.github.io/interactive-vis-course/Week12/
+
+Transformar num scroller depois?
