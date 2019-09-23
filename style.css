@@ -1,6 +1,12 @@
+section#vis {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
 .nav-stepper ul {
     display: flex;
     flex-direction: row;
+    padding: 0;
 }
 
 .nav-stepper ul li {

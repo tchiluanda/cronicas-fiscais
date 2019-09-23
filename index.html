@@ -8,28 +8,30 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>As despesas obrigatórias e discricionárias da União</h1>
+    <section id="vis">
+        <h1>As despesas obrigatórias e discricionárias da União</h1>
 
-    <div class="grafico-d3">
-        <div class="nav-stepper">
-            <ul>
-                <li>1 Valores Absolutos</li>
-                <li>2 Historico</li>
-                <li>3 Variação</li>
-                <li>4 Bolhas</li>
-            </ul>
+        <div class="grafico-d3">
+            <div class="nav-stepper">
+                <ul>
+                    <li>1 Valores Absolutos</li>
+                    <li>2 Historico</li>
+                    <li>3 Variação</li>
+                    <li>4 Bolhas</li>
+                </ul>
+            </div>
+            <div class="comentarios">
+                <h4 class="comentario"></h4>
+            </div>
+            <div class="grafico-d3-container"> 
+                <!-- este container vai servir como referência de largura para o svg, para tornar o gráfico responsivo -->
+                <!-- vamos capturar a largura desse container para usar como largura do svg / escala -->
+                <svg class="grafico-d3-svg"></svg>
+            </div>
         </div>
-        <div class="comentarios">
-            <h4 class="comentario"></h4>
-        </div>
-        <div class="grafico-d3-container"> 
-            <!-- este container vai servir como referência de largura para o svg, para tornar o gráfico responsivo -->
-            <!-- vamos capturar a largura desse container para usar como largura do svg / escala -->
-            <svg class="grafico-d3-svg"></svg>
-        </div>
-    </div>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="visualizacao.js"></script>    
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="visualizacao.js"></script>    
+    </section>
 </body>
 </html>
