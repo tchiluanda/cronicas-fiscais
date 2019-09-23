@@ -1,3 +1,5 @@
+# Conteúdo: 
+
 Esta matéria:
 
 ## Secretário do Tesouro leva os principais números fiscais do Brasil para deputados
@@ -20,3 +22,6 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 
 *Fonte: ASCOM/STN*
 
+# Forma:
+
+* https://archive.nytimes.com/www.nytimes.com/interactive/2012/05/17/business/dealbook/how-the-facebook-offering-compares.html?_r=0
