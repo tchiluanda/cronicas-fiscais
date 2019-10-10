@@ -28,16 +28,47 @@ d3.csv("dados.csv", function(d) {
     const PERIODO = d3.extent(dados, d => d.periodo);
     const AMPLITUDE_VLR_ABSOLUTO = d3.extent(dados, d => d.vlr_acu);
     const AMPLITUDE_VLR_VARIACAO = d3.extent(dados, d => d.vlr_var);
+    const AMPLITUDE_VLR_DIF      = d3.extent(dados, d => d.vlr_dif);
 
     const w = $grafico_container.node().offsetWidth;
     console.log("Largura do container: ", w);
 
+    const h = 400;
+
     const LAST_DATE = d3.max(dados, d => d.periodo);
     console.log("Última data: ", LAST_DATE);
 
-    const scale_ABSOLUTO = d3.scaleLinear().range([PAD, w - PAD]).domain(AMPLITUDE_VLR_ABSOLUTO);
+    console.log("Amplitude período: ",         PERIODO);
+    console.log("Amplitude valor absoluto: ",  AMPLITUDE_VLR_ABSOLUTO);
+    console.log("Amplitude valor relativo: ",  AMPLITUDE_VLR_VARIACAO);
+    console.log("Amplitude valor diferença: ", AMPLITUDE_VLR_DIF);
 
-    const scale_VARIACAO = d3.scaleLinear().range([PAD, w - PAD]).domain(AMPLITUDE_VLR_VARIACAO);
+    const scale_Y_PERIODO = d3
+        .scaleTime()
+        .domain(PERIODO)
+        .range([PAD, w - PAD])
+
+    const scale_DIFERENCA = d3
+        .scalePow()
+        .exponent(0.5)
+        .range([0, 80])
+        .domain(AMPLITUDE_VLR_DIF);
+
+    const scale_ABSOLUTO = d3
+        .scaleLinear()
+        .range([PAD, h - PAD])
+        .domain(AMPLITUDE_VLR_ABSOLUTO);
+
+    const scale_VARIACAO = d3
+        .scaleLinear()
+        .range([PAD, h - PAD])
+        .domain(AMPLITUDE_VLR_VARIACAO);
+    
+    console.log("Teste escala absoluta: ", 
+                dados[1].vlr_acu,
+                "corresponde a: ",
+                scale_ABSOLUTO(dados[1].vlr_acu),
+                "pixels.");
 
     
 
