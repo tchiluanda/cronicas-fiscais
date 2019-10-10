@@ -62,8 +62,6 @@ serie_plot <- serie_variacao %>%
   left_join(serie_valores) %>%
   arrange(Periodo)
 
-
-
 plot_completo <- ggplot(serie_plot, 
        aes(x = Periodo, y = valor_variacao, color = tipo_despesa)) + 
   geom_line(size = 1) +
@@ -78,3 +76,8 @@ ggsave(plot_completo, filename = "esboco_vis.png", type = "cairo-png")
 
 write.csv(serie_plot, file = "dados.csv")
                
+# para comparar com o plot do D3
+ggplot(serie_plot,
+       aes(x = Periodo, y = valor_acumulado, color = tipo_despesa)) + 
+  geom_line(size = 1)
+# ###
