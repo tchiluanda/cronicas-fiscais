@@ -8,7 +8,7 @@ console.log("Estou aqui.")
 
 d3.csv("dados.csv", function(d) {
     return {
-        periodo: d.Periodo,
+        periodo: d3.timeParse("%Y-%m-%d")(d.Periodo),
         tipo_despesa: d.tipo_despesa,
         vlr_var: +d.valor_variacao,
         vlr_dif: +d.valor_diferenca,
@@ -56,12 +56,12 @@ d3.csv("dados.csv", function(d) {
 
     const scale_ABSOLUTO = d3
         .scaleLinear()
-        .range([PAD, h - PAD])
+        .range([h - PAD, PAD])
         .domain(AMPLITUDE_VLR_ABSOLUTO);
 
     const scale_VARIACAO = d3
         .scaleLinear()
-        .range([PAD, h - PAD])
+        .range([h - PAD, PAD])
         .domain(AMPLITUDE_VLR_VARIACAO);
     
     console.log("Teste escala absoluta: ", 
@@ -70,7 +70,37 @@ d3.csv("dados.csv", function(d) {
                 scale_ABSOLUTO(dados[1].vlr_acu),
                 "pixels.");
 
+    // grab svg reference
+    const $SVG = d3.select(".grafico-d3-svg")
+                   .attr("width", w)
+                   .attr("height", h);
+
+    // create line
+    const line = d3.line()
+                   .x(d => scale_Y_PERIODO(d.periodo))
+                   .y(d => scale_ABSOLUTO(d.vlr_acu));
     
+    const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
+    const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+
+    console.table(dados_obrig);
+    console.table(dados_discr);
+
+    const linha_obrig = $SVG.append("path")
+                            .datum(dados_obrig)
+                            .attr("class", "line obrig")
+                            .attr("d", line)
+                            .attr('stroke', "cyan")
+                            .attr('fill', 'none');
+
+    const linha_discr = $SVG.append("path")
+                            .datum(dados_discr)
+                            .attr("class", "line discr")
+                            .attr("d", line)
+                            .attr('stroke', "lightcoral")
+                            .attr('fill', 'none');
+
+
 
     // console.log(AMPLITUDE_VLR_ABSOLUTO, 
     //     d3.max(dados, d => d.vlr_acu),
