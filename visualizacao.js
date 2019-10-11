@@ -86,21 +86,24 @@ d3.csv("dados.csv", function(d) {
     console.table(dados_obrig);
     console.table(dados_discr);
 
+    const t_linhas = 4000;
+
     const linha_obrig = $SVG.append("path")
                             .datum(dados_obrig)
                             .attr("class", "line obrig")
                             .attr("d", line)
                             .attr('stroke', "steelblue")
+                            .attr('stroke-width', 3)
                             .attr('fill', 'none');
 
-    let comprimento_linha = linha_obrig.node().getTotalLength();
-    console.log("Comprimento linha:", comprimento_linha);
+    let comprimento_linha_obrig = linha_obrig.node().getTotalLength();
+    console.log("Comprimento linha:", comprimento_linha_obrig);
 
     linha_obrig
-            .attr("stroke-dasharray", comprimento_linha + " " + comprimento_linha)
-            .attr("stroke-dashoffset", comprimento_linha)
+            .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_obrig)
             .transition()
-            .duration(5000)
+            .duration(t_linhas)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
 
@@ -109,9 +112,19 @@ d3.csv("dados.csv", function(d) {
                             .attr("class", "line discr")
                             .attr("d", line)
                             .attr('stroke', "lightcoral")
+                            .attr('stroke-width', 3)
                             .attr('fill', 'none');
 
+    let comprimento_linha_discr = linha_obrig.node().getTotalLength();
+    console.log("Comprimento linha:", comprimento_linha_discr);
 
+    linha_discr
+            .attr("stroke-dasharray", comprimento_linha_discr + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_discr)
+            .transition()
+            .duration(t_linhas)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
 
     // console.log(AMPLITUDE_VLR_ABSOLUTO, 
     //     d3.max(dados, d => d.vlr_acu),
