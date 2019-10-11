@@ -31,3 +31,7 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 * http://arnicas.github.io/interactive-vis-course/Week12/
 
 Transformar num scroller depois?
+
+* Efeitos, D3 etc.
+
+https://medium.com/@sahilaug/line-graphs-using-d3-animating-the-line-f82a1dfc3c91
