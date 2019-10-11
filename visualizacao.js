@@ -90,8 +90,19 @@ d3.csv("dados.csv", function(d) {
                             .datum(dados_obrig)
                             .attr("class", "line obrig")
                             .attr("d", line)
-                            .attr('stroke', "cyan")
+                            .attr('stroke', "steelblue")
                             .attr('fill', 'none');
+
+    let comprimento_linha = linha_obrig.node().getTotalLength();
+    console.log("Comprimento linha:", comprimento_linha);
+
+    linha_obrig
+            .attr("stroke-dasharray", comprimento_linha + " " + comprimento_linha)
+            .attr("stroke-dashoffset", comprimento_linha)
+            .transition()
+            .duration(5000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
 
     const linha_discr = $SVG.append("path")
                             .datum(dados_discr)
