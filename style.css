@@ -86,9 +86,9 @@ section#vis {
     background-color: ghostwhite;
     color: #333;
     border: 1px solid #333;
-    padding: 5px;
-    box-shadow: 2px 2px 5px #888;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.25);
     pointer-events: none;
+    padding: .5rem .75rem;
 }
 
 .invisivel {
