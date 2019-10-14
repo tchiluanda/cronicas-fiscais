@@ -44,29 +44,30 @@ section#vis {
 }
 
 .nav-stepper li {
-    margin: 0 10px 0 0;
+    margin: 0 2rem 0 0;
     list-style: none;
-    font-size: 0.9em;
-    padding: 0.4em 0.3em;
+    font-size: 0.8em;
+    padding: 0em;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
 }
 
 .nav-stepper ul.controle-prev-next > li {
-    background-color: maroon;
-    color: white;
+    color: maroon;
+
 }
 
 .nav-stepper ul.steps > li {
     color: slategray;
-    border-top: 2px solid white;
-    border-bottom: 2px solid white;
-
 }
 
 .nav-stepper ul.steps > li.active {
-    color: #333;
-    font-weight: bold;
-    border-bottom: 2px solid maroon;
-    border-top: 2px solid maroon;
+    color: ghostwhite;
+    /*border: 2px solid maroon;*/
+    background-color: maroon;
+    border-radius: 50%;
+    text-align: center;
 }
 
 .comentarios {
@@ -75,4 +76,21 @@ section#vis {
 
 .grafico-d3-container {
     background-color: ghostwhite;
+}
+
+.comentario {
+    font-size: 12px;
+    position: absolute;
+    width: 180px;
+    height: auto;
+    background-color: ghostwhite;
+    color: #333;
+    border: 1px solid #333;
+    padding: 5px;
+    box-shadow: 2px 2px 5px #888;
+    pointer-events: none;
+}
+
+.invisivel {
+    opacity: 0;
 }
