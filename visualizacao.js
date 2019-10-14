@@ -2,7 +2,7 @@ const $grafico = d3.select('.grafico-d3');
 const $grafico_container = d3.select('.grafico-d3-container');
 const $svg     = $grafico.select('.grafico-d3-svg');
 
-const PAD = 20;
+const PAD = 40;
 
 console.log("Estou aqui.")
 
@@ -15,6 +15,7 @@ d3.csv("dados.csv", function(d) {
         vlr_acu: +d.valor_acumulado
     }
 }).then(function(dados) {
+
     // testes para entender a estrutura dos dados
 
     //console.log(dados);
@@ -75,31 +76,60 @@ d3.csv("dados.csv", function(d) {
                    .attr("width", w)
                    .attr("height", h);
 
-    // create line
-    const line = d3.line()
-                   .x(d => scale_Y_PERIODO(d.periodo))
-                   .y(d => scale_ABSOLUTO(d.vlr_acu));
+    // // // Step 1 - Valores e caixa de texto
+
+    const dados_pontos = dados.filter(d => d.periodo >= LAST_DATE);
+    // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
     
-    const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
-    const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+    console.log("Dados pontos");
+    console.table(dados_pontos);
 
-    console.table(dados_obrig);
-    console.table(dados_discr);
+    const v_pontos = $SVG.selectAll("circle")
+                         .data(dados_pontos)
+                         .enter()
+                         .append("circle")
+                         .attr("cx", d => scale_Y_PERIODO(d.periodo))
+                         .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
+                         .attr("r", 0)
+                         .attr("fill", function(d) {
+                             if (d.tipo_despesa == "obrigatoria") return "steelblue"
+                             else return "lightcoral"})
+                        .transition(3000)
+                        .attr("r", 6)
 
-    const t_linhas = 4000;
+    d3.select("#step-2")
+      .on("click", function(){
+            console.log("Opa, entrei no listener do step-2!")
+            d3.selectAll(".steps li").classed("active", false);
+            d3.select(this).classed("active", true);
 
-    const linha_obrig = $SVG.append("path")
-                            .datum(dados_obrig)
-                            .attr("class", "line obrig")
-                            .attr("d", line)
-                            .attr('stroke', "steelblue")
-                            .attr('stroke-width', 3)
-                            .attr('fill', 'none');
+            // // // Step 2 - Linhas
 
-    let comprimento_linha_obrig = linha_obrig.node().getTotalLength();
-    console.log("Comprimento linha:", comprimento_linha_obrig);
+            // create line
+            const line = d3.line()
+            .x(d => scale_Y_PERIODO(d.periodo))
+            .y(d => scale_ABSOLUTO(d.vlr_acu));
 
-    linha_obrig
+            const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
+            const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+
+            console.table(dados_obrig);
+            console.table(dados_discr);
+
+            const t_linhas = 3000;
+
+            const v_linha_obrig = $SVG.append("path")
+                        .datum(dados_obrig)
+                        .attr("class", "line obrig")
+                        .attr("d", line)
+                        .attr('stroke', "steelblue")
+                        .attr('stroke-width', 3)
+                        .attr('fill', 'none');
+
+            let comprimento_linha_obrig = v_linha_obrig.node().getTotalLength();
+            console.log("Comprimento linha obrig:", comprimento_linha_obrig);
+
+            v_linha_obrig
             .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
             .attr("stroke-dashoffset", comprimento_linha_obrig)
             .transition()
@@ -107,24 +137,30 @@ d3.csv("dados.csv", function(d) {
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
 
-    const linha_discr = $SVG.append("path")
-                            .datum(dados_discr)
-                            .attr("class", "line discr")
-                            .attr("d", line)
-                            .attr('stroke', "lightcoral")
-                            .attr('stroke-width', 3)
-                            .attr('fill', 'none');
+            const v_linha_discr = $SVG.append("path")
+                        .datum(dados_discr)
+                        .attr("class", "line discr")
+                        .attr("d", line)
+                        .attr('stroke', "lightcoral")
+                        .attr('stroke-width', 3)
+                        .attr('fill', 'none');
 
-    let comprimento_linha_discr = linha_obrig.node().getTotalLength();
-    console.log("Comprimento linha:", comprimento_linha_discr);
+            let comprimento_linha_discr = v_linha_discr.node().getTotalLength();
+            console.log("Comprimento linha discr:", comprimento_linha_discr);
 
-    linha_discr
+            v_linha_discr
             .attr("stroke-dasharray", comprimento_linha_discr + " " + comprimento_linha_obrig)
             .attr("stroke-dashoffset", comprimento_linha_discr)
             .transition()
             .duration(t_linhas)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
+      });
+
+ 
+
+
+
 
     // console.log(AMPLITUDE_VLR_ABSOLUTO, 
     //     d3.max(dados, d => d.vlr_acu),
