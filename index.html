@@ -18,18 +18,20 @@
         <div class="grafico-d3">
             <div class="nav-stepper">
                 <ul class="controle-prev-next">
-                    <li>&#9664; Anterior</li>
-                    <li>Próximo &#9654;</li>
+                    <li>&#9664;</li>
+                    <li>&#9654;</li>
                 </ul>
                 <ul class="steps">
-                    <li class="active">1</li>
+                    <li class="active" id="step-1">1</li>
                     <li>2</li>
                     <li>3</li>
                     <li>4</li>
                 </ul>
             </div>
             <div class="comentarios">
-                <h4 class="comentario"></h4>
+                <div class="comentario invisivel" id="coment-1">
+                    <p>1. As despesas obrigatórias alcançaram...</p>
+                </div>
             </div>
             <div class="grafico-d3-container"> 
                 <!-- este container vai servir como referência de largura para o svg, para tornar o gráfico responsivo -->
