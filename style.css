@@ -60,6 +60,9 @@ section#vis {
 
 .nav-stepper ul.steps > li {
     color: slategray;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
 }
 
 .nav-stepper ul.steps > li.active {
