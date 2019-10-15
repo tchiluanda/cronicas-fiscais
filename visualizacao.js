@@ -106,7 +106,7 @@ d3.csv("dados.csv", function(d) {
             // // // Step 2 - Linhas
 
             // create line
-            const line = d3.line()
+            const line_acum = d3.line()
             .x(d => scale_Y_PERIODO(d.periodo))
             .y(d => scale_ABSOLUTO(d.vlr_acu));
 
@@ -121,7 +121,7 @@ d3.csv("dados.csv", function(d) {
             const v_linha_obrig = $SVG.append("path")
                         .datum(dados_obrig)
                         .attr("class", "line obrig")
-                        .attr("d", line)
+                        .attr("d", line_acum)
                         .attr('stroke', "steelblue")
                         .attr('stroke-width', 3)
                         .attr('fill', 'none');
@@ -140,7 +140,7 @@ d3.csv("dados.csv", function(d) {
             const v_linha_discr = $SVG.append("path")
                         .datum(dados_discr)
                         .attr("class", "line discr")
-                        .attr("d", line)
+                        .attr("d", line_acum)
                         .attr('stroke', "lightcoral")
                         .attr('stroke-width', 3)
                         .attr('fill', 'none');
