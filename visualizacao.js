@@ -47,7 +47,7 @@ d3.csv("dados.csv", function(d) {
     console.log("Amplitude valor relativo: ",  AMPLITUDE_VLR_VARIACAO);
     console.log("Amplitude valor diferença: ", AMPLITUDE_VLR_DIF);
 
-    const scale_Y_PERIODO = d3
+    const scale_X_PERIODO = d3
         .scaleTime()
         .domain(PERIODO)
         .range([PAD, w - PAD])
@@ -74,12 +74,38 @@ d3.csv("dados.csv", function(d) {
                 scale_ABSOLUTO(dados[1].vlr_acu),
                 "pixels.");
 
+    // subsets dos dados
+    const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
+    const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+
     // grab svg reference
     const $SVG = d3.select(".grafico-d3-svg")
                    .attr("width", w)
                    .attr("height", h);
 
     // funcoes 
+
+    function pathTween(d1, precision) {
+        return function() {
+          var path0 = this,
+              path1 = path0.cloneNode(),
+              n0 = path0.getTotalLength(),
+              n1 = (path1.setAttribute("d", d1), path1).getTotalLength();
+          // Uniform sampling of distance based on specified precision.
+          var distances = [0], i = 0, dt = precision / Math.max(n0, n1);
+          while ((i += dt) < 1) distances.push(i);
+          distances.push(1);
+          // Compute point-interpolators at each distance.
+          var points = distances.map(function(t) {
+            var p0 = path0.getPointAtLength(t * n0),
+                p1 = path1.getPointAtLength(t * n1);
+            return d3.interpolate([p0.x, p0.y], [p1.x, p1.y]);
+          });
+          return function(t) {
+            return t < 1 ? "M" + points.map(function(p) { return p(t); }).join("L") : d1;
+          };
+        };
+      }
 
     const switch_step = function(step) {
         d3.selectAll(".steps li").classed("active", false);
@@ -98,7 +124,7 @@ d3.csv("dados.csv", function(d) {
                                 .data(dados_pontos)
                                 .enter()
                                 .append("circle")
-                                .attr("cx", d => scale_Y_PERIODO(d.periodo))
+                                .attr("cx", d => scale_X_PERIODO(d.periodo))
                                 .attr("cy", d => scale_ABSOLUTO(d.vlr_acu)+25)
                                 .attr("class", "layer-step1")
                                 .attr("r", 0)
@@ -115,16 +141,13 @@ d3.csv("dados.csv", function(d) {
     
     
     // // // Step 2 - Linhas                    
-    const render_step2 = function(dados) {
+    const render_step2 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_acum = d3.line()
-        .x(d => scale_Y_PERIODO(d.periodo))
+        .x(d => scale_X_PERIODO(d.periodo))
         .y(d => scale_ABSOLUTO(d.vlr_acu));
-    
-        const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
-        const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
-    
+        
         console.table(dados_obrig);
         console.table(dados_discr);
   
@@ -170,31 +193,71 @@ d3.csv("dados.csv", function(d) {
     }
 
     // // // Step 3 - Linhas relativas                    
-    const render_step3 = function(dados) {
+    const render_step3 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_relativa = d3.line()
-        .x(d => scale_Y_PERIODO(d.periodo))
+        .x(d => scale_X_PERIODO(d.periodo))
         .y(d => scale_VARIACAO(d.vlr_var));
-    
-        const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
-        const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
-     
+
+        console.log("Extent periodo dados_obrig:", d3.extent(dados_obrig, d => d.periodo));
+        console.log("Extent periodo dados_discr:", d3.extent(dados_discr, d => d.periodo))
+        
         const t_linhas = 3000;
-    
-        const v_linha_obrig = $SVG.select(".line.obrig")
-                    .datum(dados_obrig)
-                    .attr("class", "line obrig layer-step3")
-                    .transition()
-                    .duration(t_linhas)
-                    .attr("d", line_relativa);
+
+        // problema: os paths vão ter quantidades de pontos diferentes.
+        // vou tentar essa solução de interpolação do Mike bostock
+
+        let d0 = $SVG.select(".line.obrig").attr("d");
+
+        let nova_linha_obrig = $SVG.append('path')
+                                   .datum(dados_obrig)
+                                   .attr("d", line_relativa)
+                                   .attr("display", "none");
+
+        let d1 = nova_linha_obrig.attr("d");
+
+        let linha_original_obrig_mod = $SVG.append('path')
+                       .attr("id", "nova-linha-original")
+                       .attr('d', d1)
+                       .attr("display", "none")
+                       .transition()
+                       .duration(0)
+                       .attrTween("d", pathTween(d0, 4));
+        
+        let d0_0 = d3.select("#nova-linha-original").attr("d");
+
+        $SVG.select(".line.obrig").remove()
+        linha_original_obrig_mod.remove()
+        nova_linha_obrig.remove()
+
+
+        const v_linha_obrig = $SVG.append('path')
+             .attr('d', d0_0)
+             .attr('stroke', "steelblue")
+             .attr('class', 'line obrig layer-step3')
+             .attr('stroke-width', 3)
+             .attr('fill', 'none');
+
+        v_linha_obrig
+             .transition()
+             .duration(5000)
+             .attrTween("d", pathTween(d1, 4));
+
+
+
+        console.log("d0 original e modificada", d0, d0_0);
+
 
         const v_linha_discr = $SVG.select(".line.discr")
                     .datum(dados_discr)
                     .attr("class", "line discr layer-step3")
                     .transition()
                     .duration(t_linhas)
-                    .attr("d", line_relativa)
+                    .attr('d', line_relativa);  
+    
+
+        
     }
 
     // inicio fluxo
@@ -231,10 +294,10 @@ d3.csv("dados.csv", function(d) {
                 render_step1(dados);
                 break;              
             case "2":
-                render_step2(dados);
+                render_step2(dados_obrig, dados_discr);
                 break;
             case "3":
-                render_step3(dados);
+                render_step3(dados_obrig, dados_discr);
                 break;
           }
         
