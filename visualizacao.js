@@ -100,6 +100,7 @@ d3.csv("dados.csv", function(d) {
                                 .append("circle")
                                 .attr("cx", d => scale_Y_PERIODO(d.periodo))
                                 .attr("cy", d => scale_ABSOLUTO(d.vlr_acu)+25)
+                                .attr("class", "layer-step1")
                                 .attr("r", 0)
                                 .attr("fill", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return "steelblue"
@@ -107,10 +108,8 @@ d3.csv("dados.csv", function(d) {
                                 .transition()
                                 .duration(1000)
                                 .attr("r", 10)
-                                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
+                                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu));
 
-        return(layer_step1_pontos);
-    
     }
     
     
@@ -133,7 +132,7 @@ d3.csv("dados.csv", function(d) {
     
         const v_linha_obrig = $SVG.append("path")
                     .datum(dados_obrig)
-                    .attr("class", "line-step2")
+                    .attr("class", "line obrig layer-step2")
                     .attr("d", line_acum)
                     .attr('stroke', "steelblue")
                     .attr('stroke-width', 3)
@@ -152,7 +151,7 @@ d3.csv("dados.csv", function(d) {
     
         const v_linha_discr = $SVG.append("path")
                     .datum(dados_discr)
-                    .attr("class", "line-step2")
+                    .attr("class", "line discr layer-step2")
                     .attr("d", line_acum)
                     .attr('stroke', "lightcoral")
                     .attr('stroke-width', 3)
@@ -169,12 +168,12 @@ d3.csv("dados.csv", function(d) {
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
 
-        let layer_step2 = $SVG.selectAll(".line-step2"); 
+        //let layer_step2 = $SVG.selectAll(".layer-step2"); 
         // para ter uma referência que eu possa "apagar" 
         // caso o usuário percorra a sequência de steps em sentido
         // inverso.
 
-        return(layer_step2);
+        // return(layer_step2);
     }
 
     // inicio fluxo
@@ -184,7 +183,10 @@ d3.csv("dados.csv", function(d) {
     d3.selectAll(".nav-stepper li")
       .on("click", function(){
          console.log("Estou no listener dos steps. O this é", this);
-         console.log("Step atual:", step_atual);
+
+         const step_anterior = step_atual;
+
+         console.log("Step atual:", step_anterior);
          
          let step_clicado = d3.select(this).attr("id").substr(5,4);
          // se o usuário clicar no número, essa substr não vai ter 4 
@@ -202,12 +204,13 @@ d3.csv("dados.csv", function(d) {
 
           switch (""+step_atual) {
             case "1":
-                if (typeof layer_step2 !== 'undefined') {layer_step2.remove()}
+                if (step_anterior > step_atual) {
+                    $SVG.selectAll(".layer-step2").remove()
+                }
                 render_step1(dados);
                 break;              
             case "2":
-                layer_step2 = render_step2(dados);
-                console.log("Layer step2", layer_step2);
+                render_step2(dados);
                 break;
           }
         
