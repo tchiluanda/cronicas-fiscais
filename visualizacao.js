@@ -17,7 +17,7 @@ d3.csv("dados.csv", function(d) {
 }).then(function(dados) {
 
     // define uma variável geral para controlar os passos
-    var step_atual = 1;
+    let step_atual = 1;
 
     // testes para entender a estrutura dos dados
 
@@ -104,7 +104,14 @@ d3.csv("dados.csv", function(d) {
       .on("click", function(){
          console.log("O this é", this);
          console.log("Step atual:", step_atual);
-          step_atual += 1;
+         let step_controle = d3.select(this).attr("id").substr(5,4);
+         if (step_controle == "next") {
+             if (step_atual != 4) step_atual += 1;                  
+         } else {
+             if (step_atual != 1) step_atual -= 1;
+         }
+
+          
           switch_step(step_atual);
 
           switch (""+step_atual) {
@@ -120,7 +127,7 @@ d3.csv("dados.csv", function(d) {
     d3.selectAll(".steps li")
       .on("click", function(){
         console.log("O this é", this);
-        const step_number = d3.select(this).attr("id")[5]
+        let step_number = d3.select(this).attr("id")[5]
         console.log("Opa, entrei no listener do step-2!", this, step_number);
         switch_step(step_number);
 
