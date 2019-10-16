@@ -100,17 +100,22 @@ d3.csv("dados.csv", function(d) {
                         .transition(3000)
                         .attr("r", 6);
 
-    d3.selectAll(".controle-prev-next li")
+    d3.selectAll(".nav-stepper li")
       .on("click", function(){
-         console.log("O this é", this);
+         console.log("Estou no listener dos steps. O this é", this);
          console.log("Step atual:", step_atual);
-         let step_controle = d3.select(this).attr("id").substr(5,4);
-         if (step_controle == "next") {
-             if (step_atual != 4) step_atual += 1;                  
-         } else {
-             if (step_atual != 1) step_atual -= 1;
-         }
+         
+         let step_clicado = d3.select(this).attr("id").substr(5,4);
+         // se o usuário clicar no número, essa substr não vai ter 4 
+         // caracteres, mas um só, o próprio número.
 
+         if (step_clicado == "next") {
+             if (step_atual != 4) step_atual += 1;                  
+         } else if (step_clicado == "prev") {
+             if (step_atual != 1) step_atual -= 1;
+         } else step_atual = +step_clicado; // esse caso vai ser o em que
+                                           // o objeto clicado é um step
+                                           // propriamente dito
           
           switch_step(step_atual);
 
@@ -124,23 +129,6 @@ d3.csv("dados.csv", function(d) {
 
       })
 
-    d3.selectAll(".steps li")
-      .on("click", function(){
-        console.log("O this é", this);
-        let step_number = d3.select(this).attr("id")[5]
-        console.log("Opa, entrei no listener do step-2!", this, step_number);
-        switch_step(step_number);
-
-        switch (step_number) {
-            case "2":
-                render_step2(dados);
-                break;
-        }
-
-        
-
-        
-      });
 
 const switch_step = function(step) {
     d3.selectAll(".steps li").classed("active", false);
