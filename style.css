@@ -55,6 +55,7 @@ section#vis {
 
 .nav-stepper ul.controle-prev-next > li {
     color: maroon;
+    cursor: pointer;
 
 }
 
