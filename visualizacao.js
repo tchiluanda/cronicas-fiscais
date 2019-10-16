@@ -16,6 +16,9 @@ d3.csv("dados.csv", function(d) {
     }
 }).then(function(dados) {
 
+    // define uma variável geral para controlar os passos
+    var step_atual = 1;
+
     // testes para entender a estrutura dos dados
 
     //console.log(dados);
@@ -95,7 +98,24 @@ d3.csv("dados.csv", function(d) {
                              if (d.tipo_despesa == "obrigatoria") return "steelblue"
                              else return "lightcoral"})
                         .transition(3000)
-                        .attr("r", 6)
+                        .attr("r", 6);
+
+    d3.selectAll(".controle-prev-next li")
+      .on("click", function(){
+         console.log("O this é", this);
+         console.log("Step atual:", step_atual);
+          step_atual += 1;
+          switch_step(step_atual);
+
+          switch (""+step_atual) {
+            case "2":
+                render_step2(dados);
+                break;
+          }
+        
+        console.log("Step atual:", step_atual);
+
+      })
 
     d3.selectAll(".steps li")
       .on("click", function(){
@@ -109,6 +129,8 @@ d3.csv("dados.csv", function(d) {
                 render_step2(dados);
                 break;
         }
+
+        
 
         
       });
@@ -175,7 +197,7 @@ const render_step2 = function(dados) {
 
 
 
-
+console.log("Step atual:", step_atual);
 
 
 
