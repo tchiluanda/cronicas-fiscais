@@ -167,13 +167,34 @@ d3.csv("dados.csv", function(d) {
             .duration(t_linhas)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
+    }
 
-        //let layer_step2 = $SVG.selectAll(".layer-step2"); 
-        // para ter uma referência que eu possa "apagar" 
-        // caso o usuário percorra a sequência de steps em sentido
-        // inverso.
+    // // // Step 3 - Linhas relativas                    
+    const render_step3 = function(dados) {
+        
+        // create line
+        const line_relativa = d3.line()
+        .x(d => scale_Y_PERIODO(d.periodo))
+        .y(d => scale_VARIACAO(d.vlr_var));
+    
+        const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
+        const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+     
+        const t_linhas = 3000;
+    
+        const v_linha_obrig = $SVG.select(".line.obrig")
+                    .datum(dados_obrig)
+                    .attr("class", "line obrig layer-step3")
+                    .transition()
+                    .duration(t_linhas)
+                    .attr("d", line_relativa);
 
-        // return(layer_step2);
+        const v_linha_discr = $SVG.select(".line.discr")
+                    .datum(dados_discr)
+                    .attr("class", "line discr layer-step3")
+                    .transition()
+                    .duration(t_linhas)
+                    .attr("d", line_relativa)
     }
 
     // inicio fluxo
@@ -211,6 +232,9 @@ d3.csv("dados.csv", function(d) {
                 break;              
             case "2":
                 render_step2(dados);
+                break;
+            case "3":
+                render_step3(dados);
                 break;
           }
         
