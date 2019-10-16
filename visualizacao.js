@@ -94,7 +94,7 @@ d3.csv("dados.csv", function(d) {
         console.log("Dados pontos");
         console.table(dados_pontos);
   
-        const v_pontos = $SVG.selectAll("circle")
+        const layer_step1_pontos = $SVG.selectAll("circle")
                                 .data(dados_pontos)
                                 .enter()
                                 .append("circle")
@@ -108,6 +108,8 @@ d3.csv("dados.csv", function(d) {
                                 .duration(1000)
                                 .attr("r", 10)
                                 .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
+
+        return(layer_step1_pontos);
     
     }
     
@@ -131,7 +133,7 @@ d3.csv("dados.csv", function(d) {
     
         const v_linha_obrig = $SVG.append("path")
                     .datum(dados_obrig)
-                    .attr("class", "line obrig")
+                    .attr("class", "line-step2")
                     .attr("d", line_acum)
                     .attr('stroke', "steelblue")
                     .attr('stroke-width', 3)
@@ -141,16 +143,16 @@ d3.csv("dados.csv", function(d) {
         console.log("Comprimento linha obrig:", comprimento_linha_obrig);
     
         v_linha_obrig
-        .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
-        .attr("stroke-dashoffset", comprimento_linha_obrig)
-        .transition()
-        .duration(t_linhas)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+            .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_obrig)
+            .transition()
+            .duration(t_linhas)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
     
         const v_linha_discr = $SVG.append("path")
                     .datum(dados_discr)
-                    .attr("class", "line discr")
+                    .attr("class", "line-step2")
                     .attr("d", line_acum)
                     .attr('stroke', "lightcoral")
                     .attr('stroke-width', 3)
@@ -160,17 +162,24 @@ d3.csv("dados.csv", function(d) {
         console.log("Comprimento linha discr:", comprimento_linha_discr);
     
         v_linha_discr
-        .attr("stroke-dasharray", comprimento_linha_discr + " " + comprimento_linha_obrig)
-        .attr("stroke-dashoffset", comprimento_linha_discr)
-        .transition()
-        .duration(t_linhas)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+            .attr("stroke-dasharray", comprimento_linha_discr + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_discr)
+            .transition()
+            .duration(t_linhas)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
+
+        let layer_step2 = $SVG.selectAll(".line-step2"); 
+        // para ter uma referência que eu possa "apagar" 
+        // caso o usuário percorra a sequência de steps em sentido
+        // inverso.
+
+        return(layer_step2);
     }
 
     // inicio fluxo
     
-    render_step1(dados);
+    let layer_step1 = render_step1(dados);
 
     d3.selectAll(".nav-stepper li")
       .on("click", function(){
@@ -193,10 +202,12 @@ d3.csv("dados.csv", function(d) {
 
           switch (""+step_atual) {
             case "1":
+                if (typeof layer_step2 !== 'undefined') {layer_step2.remove()}
                 render_step1(dados);
                 break;              
             case "2":
-                render_step2(dados);
+                layer_step2 = render_step2(dados);
+                console.log("Layer step2", layer_step2);
                 break;
           }
         
