@@ -97,17 +97,25 @@ d3.csv("dados.csv", function(d) {
                         .transition(3000)
                         .attr("r", 6)
 
-    d3.select("#step-2")
+    d3.selectAll(".steps li")
       .on("click", function(){
-            console.log("Opa, entrei no listener do step-2!", this);
-            ativa_step(this);
-            render_step2(dados);
+        console.log("O this é", this);
+        const step_number = d3.select(this).attr("id")[5]
+        console.log("Opa, entrei no listener do step-2!", this, step_number);
+        switch_step(step_number);
 
+        switch (step_number) {
+            case "2":
+                render_step2(dados);
+                break;
+        }
+
+        
       });
 
-const ativa_step = function(step) {
+const switch_step = function(step) {
     d3.selectAll(".steps li").classed("active", false);
-    d3.select(step).classed("active", true);
+    d3.select("#step-" + step).classed("active", true);
 }
 
 const render_step2 = function(dados) {
