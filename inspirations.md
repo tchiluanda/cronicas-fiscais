@@ -32,6 +32,10 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 
 Transformar num scroller depois?
 
-* Efeitos, D3 etc.
+# Efeitos, D3 etc.
 
-https://medium.com/@sahilaug/line-graphs-using-d3-animating-the-line-f82a1dfc3c91
+* https://medium.com/@sahilaug/line-graphs-using-d3-animating-the-line-f82a1dfc3c91
+
+* https://bocoup.com/blog/improving-d3-path-animation (match path length prior to interpolation)
+
+* https://github.com/pbeshai/d3-interpolate-path
