@@ -30,6 +30,16 @@ section#vis {
     font-family: 'PT Serif', serif;
 }
 
+section#vis h1 {
+    text-align: center;
+}
+
+div.narrativa {
+    background-color: cornsilk;
+    color: slategray;
+    padding: 20px;
+}
+
 .nav-stepper {
     display: flex;
     flex-direction: row;
