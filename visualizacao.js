@@ -77,7 +77,7 @@ d3.csv("dados.csv", function(d) {
 
     const scale_COLOR = d3
         .scaleOrdinal()
-        .range(["lightcoral", "steelblue"])
+        .range(["#e6be8a", "#ff2190"])
         .domain(["discricionaria", "obrigatoria"]);
 
     const eixo_y_abs = d3.axisLeft()
@@ -166,7 +166,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
                                     else return(w*3/4 - 15)})
-                                .attr("width", 10)
+                                .attr("width", 15)
                                 .attr("height", 0)
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
                                 .transition()
@@ -194,7 +194,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
                                     else return(w*1/4 - 15)})
-                                .attr("width", 10)
+                                .attr("width", 15)
                                 .attr("height", 0)
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
                                 .transition()
@@ -215,6 +215,7 @@ d3.csv("dados.csv", function(d) {
                                 .duration(2000)
                                 .attr("x", d => scale_X_PERIODO(d.periodo))
                                 .attr("height", 10)
+                                .attr("width", 10)
                                 .attr("rx", 100)
                                 .attr("ry", 100);
 
@@ -257,7 +258,7 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
             .attr("stroke-dashoffset", comprimento_linha_obrig)
             .transition()
-            .delay(4000)
+            .delay(5000)
             .duration(2000)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
