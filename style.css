@@ -58,6 +58,15 @@ div.narrativa {
     fill: lightslategray;
 }
 
+.x-axis text {
+    fill: lightslategray;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+
+.x-axis line, .x-axis path {
+    stroke: lightslategray;
+}
+
 .nav-stepper {
     display: flex;
     flex-direction: row;

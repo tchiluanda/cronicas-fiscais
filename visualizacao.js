@@ -88,6 +88,10 @@ d3.csv("dados.csv", function(d) {
     const eixo_y_abs = d3.axisLeft()
                 .scale(scale_ABSOLUTO)
                 .tickFormat(function(d) {return formataBR(d/1e3)});
+
+    const eixo_x_data = d3.axisBottom()
+                .scale(scale_X_PERIODO)
+                .tickFormat(d => formataData(d));
     
     console.log("Teste escala absoluta: ", 
                 dados[1].vlr_acu,
@@ -122,6 +126,9 @@ d3.csv("dados.csv", function(d) {
         "currency": ["R$", ""]};
     
     let formataBR = d3.formatDefaultLocale(localeBrasil).format(",.0f");
+    let formataData = d3.timeFormat("%b %Y");
+
+    console.log("Periodo formatado:", formataData(PERIODO[0]));
 
     function pathTween(d1, precision) {
         return function() {
@@ -270,7 +277,11 @@ d3.csv("dados.csv", function(d) {
     // // // Step 3 - Transformação em círculos
     const render_step3 = function() {
 
-        // transforma barras em círculos
+        // remove texto
+
+        $SVG.selectAll("text").transition().duration(1000).attr("opacity", 0).remove()
+
+        // transforma barras em círculos, e remove
 
         const layer_step3 = $SVG.selectAll("rect")
                                 .attr("class", "layer-step3-pontos")
@@ -280,26 +291,24 @@ d3.csv("dados.csv", function(d) {
                                 .attr("height", 10)
                                 .attr("width", 10)
                                 .attr("rx", 100)
-                                .attr("ry", 100);
+                                .attr("ry", 100)
+                                .remove()
 
-        // círculos intermediários
-        /*
-        const layer_step3_circles = $SVG.selectAll("circle")
-                                        .data(dados)
-                                        .enter()
-                                        .append("circle")
-                                        .attr("cx", d => scale_X_PERIODO(d.periodo))
-                                        .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
-                                        .attr("class", "layer-step3-pontos")
-                                        .attr("r", 0)
-                                        .attr("fill", d => scale_COLOR(d.tipo_despesa))
-                                        .transition()
-                                        .delay(2000)
-                                        .transition()
-                                        .delay((d,i) => 2000/dados_obrig.length * i)
-                                        .duration(100)
-                                        .attr("r", 2);
-        */
+        //  entram círculos
+
+        $SVG.selectAll("circle")
+                .data(dados_extremos)
+                .enter()
+                .append("circle")
+                .attr("opacity", 0)
+                .attr("cx", d => scale_X_PERIODO(d.periodo))
+                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
+                .attr("fill", d => scale_COLOR(d.tipo_despesa))
+                .attr("r", 8)
+                .transition()
+                .delay(1500)
+                .duration(1000)
+                .attr("opacity", 1);
         
         // create line
 
@@ -346,15 +355,19 @@ d3.csv("dados.csv", function(d) {
             .duration(2000)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
-        
-        // remove
-        
-        $SVG.selectAll(".layer-step3-pontos")
-            .transition()
-            .delay(7000)
-            .duration(1000)
+
+        // inclui eixo
+
+        $SVG.append("g") 
+            .attr("class", "axis x-axis")
+            .attr("transform", "translate(0," + (h-PAD) + ")")
             .attr("opacity", 0)
-            .remove()
+            .call(eixo_x_data)
+            .transition()
+            .delay(4000)
+            .duration(2000)
+            .attr("opacity", 1);
+        
     }
 
     // // // Step 4 - Valores e caixa de texto
@@ -502,9 +515,6 @@ d3.csv("dados.csv", function(d) {
                     .transition()
                     .duration(t_linhas)
                     .attr('d', line_relativa);  
-    
-
-        
     }
 
     // inicio fluxo
@@ -559,11 +569,7 @@ d3.csv("dados.csv", function(d) {
       })
 
     console.log("Step atual:", step_atual);
-
-
-
-
-    
+ 
 
     
 })
