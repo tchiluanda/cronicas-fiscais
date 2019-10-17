@@ -28,7 +28,7 @@ header img.logo-tt {
 section#vis {
     max-width: 680px;
     margin: 0 auto;
-    font-family: 'PT Serif', serif;
+    font-family: 'Merriweather', serif;
 }
 
 section#vis h1 {
@@ -46,6 +46,16 @@ div.narrativa {
     background-color: ghostwhite;
     border: 1px solid #333;
     padding: 10px;
+}
+
+.text-label {
+    font-size: 0.8rem;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+
+.label-inicial {
+    font-size: 0.6rem;
+    fill: lightslategray;
 }
 
 .nav-stepper {
