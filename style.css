@@ -4,6 +4,7 @@
 
 body {
     margin: 0;
+    background-color: #FCFBFA;
 }
 
 header#abertura {
@@ -39,6 +40,12 @@ div.narrativa {
     color: slategray;
     padding: 10px;
     font-size: 0.8rem;
+}
+
+.textos-steps {
+    background-color: ghostwhite;
+    border: 1px solid #333;
+    padding: 10px;
 }
 
 .nav-stepper {
@@ -87,10 +94,6 @@ div.narrativa {
 
 .comentarios {
     background-color: aquamarine;
-}
-
-.grafico-d3-container {
-    background-color: ghostwhite;
 }
 
 .comentario {
