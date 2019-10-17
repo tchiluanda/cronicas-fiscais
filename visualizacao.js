@@ -264,6 +264,7 @@ d3.csv("dados.csv", function(d) {
                                      .attr("x", w*3/4 + 7.5)
                                      .text("Jul 2019");
 
+
     };
 
     // // // Step 3 - Transformação em círculos
