@@ -77,7 +77,7 @@ d3.csv("dados.csv", function(d) {
 
     const scale_COLOR = d3
         .scaleOrdinal()
-        .range(["#e6be8a", "#ff2190"])
+        .range(["#FFE93B", "#ff2190"])
         .domain(["discricionaria", "obrigatoria"]);
 
     const eixo_y_abs = d3.axisLeft()
@@ -199,7 +199,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
                                 .transition()
                                 .duration(2000)
-                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu)-7)
                                 .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
 
     };
@@ -213,14 +213,14 @@ d3.csv("dados.csv", function(d) {
                                 .attr("class", "layer-step3-pontos")
                                 .transition()
                                 .duration(2000)
-                                .attr("x", d => scale_X_PERIODO(d.periodo))
+                                .attr("x", d => scale_X_PERIODO(d.periodo)-5)
                                 .attr("height", 10)
                                 .attr("width", 10)
                                 .attr("rx", 100)
                                 .attr("ry", 100);
 
         // círculos intermediários
-        
+        /*
         const layer_step3_circles = $SVG.selectAll("circle")
                                         .data(dados)
                                         .enter()
@@ -236,6 +236,7 @@ d3.csv("dados.csv", function(d) {
                                         .delay((d,i) => 2000/dados_obrig.length * i)
                                         .duration(100)
                                         .attr("r", 2);
+        */
         
         // create line
 
@@ -258,7 +259,7 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
             .attr("stroke-dashoffset", comprimento_linha_obrig)
             .transition()
-            .delay(5000)
+            .delay(4000)
             .duration(2000)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
@@ -282,16 +283,15 @@ d3.csv("dados.csv", function(d) {
             .duration(2000)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
-
+        
+        // remove
+        
         $SVG.selectAll(".layer-step3-pontos")
             .transition()
-            .delay(6000)
-            .duration(500)
+            .delay(7000)
+            .duration(1000)
             .attr("opacity", 0)
             .remove()
-        
-
-
     }
 
     // // // Step 4 - Valores e caixa de texto
