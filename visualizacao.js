@@ -40,6 +40,8 @@ d3.csv("dados.csv", function(d) {
     const h = 400;
 
     const LAST_DATE = d3.max(dados, d => d.periodo);
+    const FRST_DATE = d3.min(dados, d => d.periodo);
+
     console.log("Última data: ", LAST_DATE);
 
     console.log("Amplitude período: ",         PERIODO);
@@ -67,6 +69,11 @@ d3.csv("dados.csv", function(d) {
         .scaleLinear()
         .range([h - PAD, PAD])
         .domain(AMPLITUDE_VLR_VARIACAO);
+
+    const scale_COLOR = d3
+        .scaleOrdinal()
+        .range(["lightcoral", "steelblue"])
+        .domain(["discricionaria", "obrigatoria"]);
     
     console.log("Teste escala absoluta: ", 
                 dados[1].vlr_acu,
@@ -75,6 +82,8 @@ d3.csv("dados.csv", function(d) {
                 "pixels.");
 
     // subsets dos dados
+    const dados_inici = dados.filter(d => d.periodo <= FRST_DATE);
+    const dados_final = dados.filter(d => d.periodo >= LAST_DATE);
     const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
     const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
 
@@ -112,9 +121,23 @@ d3.csv("dados.csv", function(d) {
         d3.select("#step-" + step).classed("active", true);
     }
     
-    // // // Step 1 - Valores e caixa de texto
+    // // // Step 1 - Barras atuais
     const render_step1 = function(dados) {
-        const dados_pontos = dados.filter(d => d.periodo >= LAST_DATE);
+        const layer_step1 = $SVG.selectAll("rect")
+                                .data(dados_inici)
+                                .enter()
+                                .append("rect")
+                                .attr("x", 0)
+                                .attr("y", d => if (d.tipo_despesa == "obrigatoria"))
+                                .attr("width", 10)
+                                .attr("height", 0)
+
+
+    }
+
+    // // // Step 3 - Valores e caixa de texto
+    const render_step3 = function(dados) {
+        
         // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
     
         console.log("Dados pontos");
@@ -140,8 +163,8 @@ d3.csv("dados.csv", function(d) {
     
     
     
-    // // // Step 2 - Linhas                    
-    const render_step2 = function(dados_obrig, dados_discr) {
+    // // // Step 4 - Linhas                    
+    const render_step4 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_acum = d3.line()
@@ -192,8 +215,8 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke-dashoffset", 0);
     }
 
-    // // // Step 3 - Linhas relativas                    
-    const render_step3 = function(dados_obrig, dados_discr) {
+    // // // Step 5 - Linhas relativas                    
+    const render_step5 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_relativa = d3.line()
@@ -262,7 +285,7 @@ d3.csv("dados.csv", function(d) {
 
     // inicio fluxo
     
-    let layer_step1 = render_step1(dados);
+    let layer_step1 = render_step3(dados);
 
     d3.selectAll(".nav-stepper li")
       .on("click", function(){
@@ -298,6 +321,12 @@ d3.csv("dados.csv", function(d) {
                 break;
             case "3":
                 render_step3(dados_obrig, dados_discr);
+                break;
+            case "4":
+                render_step4(dados_obrig, dados_discr);
+                break;
+            case "5":
+                render_step5(dados_obrig, dados_discr);
                 break;
           }
         
