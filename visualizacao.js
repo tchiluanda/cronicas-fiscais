@@ -156,10 +156,38 @@ d3.csv("dados.csv", function(d) {
                                 .data(dados_final)
                                 .enter()
                                 .append("rect")
+                                .attr("class", "layer-step1")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
                                     else return(w*3/4 - 15)})
+                                .attr("width", 10)
+                                .attr("height", 0)
+                                .attr("fill", d => scale_COLOR(d.tipo_despesa))
+                                .transition()
+                                .duration(2000)
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
+                                .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
+
+        /*$SVG.append("g")    
+            .attr("class", "axis y-axis")
+            .attr("transform", "translate(" + PAD + ")")
+            .call(eixo_y_abs); */
+
+
+    }
+
+    // // // Step 2 - Barras início série
+    const render_step2 = function(dados_inici) {
+
+        const layer_step2 = $SVG.selectAll("rect.layer-step2")
+                                .data(dados_inici)
+                                .enter()
+                                .append("rect")
+                                .attr("y", scale_ABSOLUTO(0))
+                                .attr("x", function(d) {
+                                    if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
+                                    else return(w*1/4 - 15)})
                                 .attr("width", 10)
                                 .attr("height", 0)
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
@@ -358,7 +386,7 @@ d3.csv("dados.csv", function(d) {
                 render_step1(dados);
                 break;              
             case "2":
-                render_step2(dados_obrig, dados_discr);
+                render_step2(dados_inici);
                 break;
             case "3":
                 render_step3(dados_obrig, dados_discr);
