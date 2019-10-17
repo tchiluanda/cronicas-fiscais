@@ -37,7 +37,8 @@ section#vis h1 {
 div.narrativa {
     background-color: cornsilk;
     color: slategray;
-    padding: 20px;
+    padding: 10px;
+    font-size: 0.8rem;
 }
 
 .nav-stepper {
