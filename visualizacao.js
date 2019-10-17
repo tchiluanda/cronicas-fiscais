@@ -189,6 +189,7 @@ d3.csv("dados.csv", function(d) {
                                 .data(dados_extremos, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
+                                .attr("class", "layer-step2")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
@@ -201,16 +202,39 @@ d3.csv("dados.csv", function(d) {
                                 .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
                                 .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
 
-        /*$SVG.append("g")    
-            .attr("class", "axis y-axis")
-            .attr("transform", "translate(" + PAD + ")")
-            .call(eixo_y_abs); */
+    }
+
+    // // // Step 3 - Transformação em círculos
+    const render_step3 = function() {
+
+        const layer_step3 = $SVG.selectAll("rect")
+                                .transition()
+                                .duration(2000)
+                                .attr("x", d => scale_X_PERIODO(d.periodo))
+                                .attr("height", 10)
+                                .attr("rx", 100)
+                                .attr("ry", 100);
+        
+        const layer_step3_circles = $SVG.selectAll("circle")
+                                        .data(dados)
+                                        .enter()
+                                        .append("circle")
+                                        .attr("cx", d => scale_X_PERIODO(d.periodo))
+                                        .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
+                                        .attr("class", "layer-step1")
+                                        .attr("r", 0)
+                                        .attr("fill", d => scale_COLOR(d.tipo_despesa))
+                                        .transition()
+                                        .delay(2000)
+                                        .duration(1000)
+                                        .attr("r", 2);
+        
 
 
     }
 
-    // // // Step 3 - Valores e caixa de texto
-    const render_step3 = function(dados_final) {
+    // // // Step 4 - Valores e caixa de texto
+    const render_step4 = function(dados_final, dados_obrig, dados_discr) {
         
         // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
     
@@ -238,7 +262,7 @@ d3.csv("dados.csv", function(d) {
     
     
     // // // Step 4 - Linhas                    
-    const render_step4 = function(dados_obrig, dados_discr) {
+    const render_step5 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_acum = d3.line()
@@ -290,7 +314,7 @@ d3.csv("dados.csv", function(d) {
     }
 
     // // // Step 5 - Linhas relativas                    
-    const render_step5 = function(dados_obrig, dados_discr) {
+    const render_step6 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_relativa = d3.line()
@@ -394,7 +418,7 @@ d3.csv("dados.csv", function(d) {
                 render_step2(dados_extremos);
                 break;
             case "3":
-                render_step3(dados_obrig, dados_discr);
+                render_step3(dados_extremos);
                 break;
             case "4":
                 render_step4(dados_obrig, dados_discr);
