@@ -80,6 +80,11 @@ d3.csv("dados.csv", function(d) {
         .range(["#FFE93B", "#ff2190"])
         .domain(["discricionaria", "obrigatoria"]);
 
+    const scale_COLOR_text = d3
+        .scaleOrdinal()
+        .range(["#B3A017", "#B30C5F"])
+        .domain(["discricionaria", "obrigatoria"]);
+         
     const eixo_y_abs = d3.axisLeft()
                 .scale(scale_ABSOLUTO)
                 .tickFormat(function(d) {return formataBR(d/1e3)});
@@ -158,14 +163,14 @@ d3.csv("dados.csv", function(d) {
 
 
         const layer_step1 = $SVG.selectAll("rect")
-                                .data(dados_final, d => d.periodo + d.tipo_despesa)
+                                .data(dados_inici, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
                                 .attr("class", "layer-step1")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
-                                    if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
-                                    else return(w*3/4 - 15)})
+                                    if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
+                                    else return(w*1/4 - 15)})
                                 .attr("width", 15)
                                 .attr("height", 0)
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
@@ -178,6 +183,35 @@ d3.csv("dados.csv", function(d) {
             .attr("class", "axis y-axis")
             .attr("transform", "translate(" + PAD + ")")
             .call(eixo_y_abs); */
+
+        // textos
+        
+        const texto_step1 = $SVG.selectAll("text.labels-valores")
+                                .data(dados_inici, d => d.periodo + d.tipo_despesa)
+                                .enter()
+                                .append("text")
+                                .attr("class", "text-label label-valores")
+                                .attr("text-anchor", "middle")
+                                .attr("fill", d => scale_COLOR_text(d.tipo_despesa))
+                                .text(d => formataBR(d.vlr_acu/1e3) + " bi")
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu) - 10)
+                                .attr("x", function(d) {
+                                    if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15 + 7.5)
+                                    else return(w*1/4 - 15 + 7.5)})
+                                .attr("opacity", 0)
+                                .transition()
+                                .delay(2000)
+                                .duration(1000)
+                                .attr("opacity", 1);
+
+        const texto_eixo_step1 = $SVG
+                                     .append("text")
+                                     .attr("class", "text-label label-inicial")
+                                     .attr("text-anchor", "middle")
+                                     .attr("y", scale_ABSOLUTO(0) + 25)
+                                     .attr("x", w*1/4 + 7.5)
+                                     .text("Dez 2010");
+
 
 
     }
@@ -192,15 +226,43 @@ d3.csv("dados.csv", function(d) {
                                 .attr("class", "layer-step2")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
-                                    if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
-                                    else return(w*1/4 - 15)})
+                                    if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
+                                    else return(w*3/4 - 15)})
                                 .attr("width", 15)
                                 .attr("height", 0)
                                 .attr("fill", d => scale_COLOR(d.tipo_despesa))
                                 .transition()
                                 .duration(2000)
-                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu)-7)
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
                                 .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
+
+        // textos
+        
+        const texto_step2 = $SVG.selectAll("text.label-valores")
+                                .data(dados_extremos, d => d.periodo + d.tipo_despesa)
+                                .enter()
+                                .append("text")
+                                .attr("class", "text-label label-valores")
+                                .attr("text-anchor", "middle")
+                                .attr("fill", d => scale_COLOR_text(d.tipo_despesa))
+                                .text(d => formataBR(d.vlr_acu/1e3) + " bi")
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu) - 10)
+                                .attr("x", function(d) {
+                                    if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15 + 7.5)
+                                    else return(w*3/4 - 15 + 7.5)})
+                                .attr("opacity", 0)
+                                .transition()
+                                .delay(2000)
+                                .duration(1000)
+                                .attr("opacity", 1);
+
+        const texto_eixo_step2 = $SVG
+                                     .append("text")
+                                     .attr("class", "text-label label-inicial")
+                                     .attr("text-anchor", "middle")
+                                     .attr("y", scale_ABSOLUTO(0) + 25)
+                                     .attr("x", w*3/4 + 7.5)
+                                     .text("Jul 2019");
 
     };
 
