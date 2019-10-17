@@ -39,3 +39,5 @@ Transformar num scroller depois?
 * https://bocoup.com/blog/improving-d3-path-animation (match path length prior to interpolation)
 
 * https://github.com/pbeshai/d3-interpolate-path
+
+* https://gist.github.com/mbostock/3916621#file-index-html
