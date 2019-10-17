@@ -30,7 +30,7 @@ d3.csv("dados.csv", function(d) {
 
     // constantes gerais dos dados
     const PERIODO = d3.extent(dados, d => d.periodo);
-    const AMPLITUDE_VLR_ABSOLUTO = d3.extent(dados, d => d.vlr_acu);
+    const AMPLITUDE_VLR_ABSOLUTO = [0, d3.max(dados, d => d.vlr_acu)];
     const AMPLITUDE_VLR_VARIACAO = d3.extent(dados, d => d.vlr_var);
     const AMPLITUDE_VLR_DIF      = d3.extent(dados, d => d.vlr_dif);
 
@@ -65,6 +65,11 @@ d3.csv("dados.csv", function(d) {
         .range([h - PAD, PAD])
         .domain(AMPLITUDE_VLR_ABSOLUTO);
 
+    const scale_ABSOLUTO_height = d3
+        .scaleLinear()
+        .range([0, h - PAD - PAD])
+        .domain(AMPLITUDE_VLR_ABSOLUTO);
+
     const scale_VARIACAO = d3
         .scaleLinear()
         .range([h - PAD, PAD])
@@ -74,6 +79,10 @@ d3.csv("dados.csv", function(d) {
         .scaleOrdinal()
         .range(["lightcoral", "steelblue"])
         .domain(["discricionaria", "obrigatoria"]);
+
+    const eixo_y_abs = d3.axisLeft()
+                .scale(scale_ABSOLUTO)
+                .tickFormat(function(d) {return formataBR(d/1e3)});
     
     console.log("Teste escala absoluta: ", 
                 dados[1].vlr_acu,
@@ -92,7 +101,17 @@ d3.csv("dados.csv", function(d) {
                    .attr("width", w)
                    .attr("height", h);
 
-    // funcoes 
+    // // funcoes 
+
+    // formatação valores
+    
+    let localeBrasil = {
+        "decimal": ",",
+        "thousands": ".",
+        "grouping": [3],
+        "currency": ["R$", ""]};
+    
+    let formataBR = d3.formatDefaultLocale(localeBrasil).format(",.0f");
 
     function pathTween(d1, precision) {
         return function() {
@@ -122,29 +141,51 @@ d3.csv("dados.csv", function(d) {
     }
     
     // // // Step 1 - Barras atuais
-    const render_step1 = function(dados) {
+    const render_step1 = function(dados_final) {
+
+        console.log("Dados final:")
+        console.table(dados_final);
+        console.log("valor / y / height", dados_final[0].vlr_acu, 
+        scale_ABSOLUTO(dados_final[0].vlr_acu), scale_ABSOLUTO_height(dados_final[0].vlr_acu));
+        console.log("valor / y / height", dados_final[1].vlr_acu, 
+        scale_ABSOLUTO(dados_final[1].vlr_acu), scale_ABSOLUTO_height(dados_final[1].vlr_acu));
+
+
+
         const layer_step1 = $SVG.selectAll("rect")
-                                .data(dados_inici)
+                                .data(dados_final)
                                 .enter()
                                 .append("rect")
-                                .attr("x", 0)
-                                .attr("y", d => if (d.tipo_despesa == "obrigatoria"))
+                                .attr("y", scale_ABSOLUTO(0))
+                                .attr("x", function(d) {
+                                    if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
+                                    else return(w*3/4 - 15)})
                                 .attr("width", 10)
                                 .attr("height", 0)
+                                .attr("fill", d => scale_COLOR(d.tipo_despesa))
+                                .transition()
+                                .duration(2000)
+                                .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
+                                .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
+
+        /*$SVG.append("g")    
+            .attr("class", "axis y-axis")
+            .attr("transform", "translate(" + PAD + ")")
+            .call(eixo_y_abs); */
 
 
     }
 
     // // // Step 3 - Valores e caixa de texto
-    const render_step3 = function(dados) {
+    const render_step3 = function(dados_final) {
         
         // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
     
         console.log("Dados pontos");
-        console.table(dados_pontos);
+        console.table(dados_final);
   
         const layer_step1_pontos = $SVG.selectAll("circle")
-                                .data(dados_pontos)
+                                .data(dados_final)
                                 .enter()
                                 .append("circle")
                                 .attr("cx", d => scale_X_PERIODO(d.periodo))
@@ -285,7 +326,7 @@ d3.csv("dados.csv", function(d) {
 
     // inicio fluxo
     
-    let layer_step1 = render_step3(dados);
+    let layer_step1 = render_step1(dados_final);
 
     d3.selectAll(".nav-stepper li")
       .on("click", function(){
