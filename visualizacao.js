@@ -95,6 +95,11 @@ d3.csv("dados.csv", function(d) {
     const dados_final = dados.filter(d => d.periodo >= LAST_DATE);
     const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
     const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
+    const dados_extremos = dados.filter(d => d.periodo >= LAST_DATE |
+        d.periodo <= FRST_DATE);
+
+    console.log("Dados extremos:")
+    console.table(dados_extremos);
 
     // grab svg reference
     const $SVG = d3.select(".grafico-d3-svg")
@@ -153,7 +158,7 @@ d3.csv("dados.csv", function(d) {
 
 
         const layer_step1 = $SVG.selectAll("rect")
-                                .data(dados_final)
+                                .data(dados_final, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
                                 .attr("class", "layer-step1")
@@ -178,10 +183,10 @@ d3.csv("dados.csv", function(d) {
     }
 
     // // // Step 2 - Barras início série
-    const render_step2 = function(dados_inici) {
+    const render_step2 = function(dados_extremos) {
 
-        const layer_step2 = $SVG.selectAll("rect.layer-step2")
-                                .data(dados_inici)
+        const layer_step2 = $SVG.selectAll("rect")
+                                .data(dados_extremos, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
                                 .attr("y", scale_ABSOLUTO(0))
@@ -386,7 +391,7 @@ d3.csv("dados.csv", function(d) {
                 render_step1(dados);
                 break;              
             case "2":
-                render_step2(dados_inici);
+                render_step2(dados_extremos);
                 break;
             case "3":
                 render_step3(dados_obrig, dados_discr);
