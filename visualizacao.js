@@ -146,7 +146,7 @@ d3.csv("dados.csv", function(d) {
     }
     
     // // // Step 1 - Barras atuais
-    const render_step1 = function(dados_final) {
+    const render_step1 = function() {
 
         console.log("Dados final:")
         console.table(dados_final);
@@ -183,7 +183,7 @@ d3.csv("dados.csv", function(d) {
     }
 
     // // // Step 2 - Barras início série
-    const render_step2 = function(dados_extremos) {
+    const render_step2 = function() {
 
         const layer_step2 = $SVG.selectAll("rect")
                                 .data(dados_extremos, d => d.periodo + d.tipo_despesa)
@@ -202,18 +202,23 @@ d3.csv("dados.csv", function(d) {
                                 .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
                                 .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
 
-    }
+    };
 
     // // // Step 3 - Transformação em círculos
     const render_step3 = function() {
 
+        // transforma barras em círculos
+
         const layer_step3 = $SVG.selectAll("rect")
+                                .attr("class", "layer-step3-pontos")
                                 .transition()
                                 .duration(2000)
                                 .attr("x", d => scale_X_PERIODO(d.periodo))
                                 .attr("height", 10)
                                 .attr("rx", 100)
                                 .attr("ry", 100);
+
+        // círculos intermediários
         
         const layer_step3_circles = $SVG.selectAll("circle")
                                         .data(dados)
@@ -221,20 +226,75 @@ d3.csv("dados.csv", function(d) {
                                         .append("circle")
                                         .attr("cx", d => scale_X_PERIODO(d.periodo))
                                         .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
-                                        .attr("class", "layer-step1")
+                                        .attr("class", "layer-step3-pontos")
                                         .attr("r", 0)
                                         .attr("fill", d => scale_COLOR(d.tipo_despesa))
                                         .transition()
                                         .delay(2000)
-                                        .duration(1000)
+                                        .transition()
+                                        .delay((d,i) => 2000/dados_obrig.length * i)
+                                        .duration(100)
                                         .attr("r", 2);
+        
+        // create line
+
+        const line_acum = d3.line()
+            .x(d => scale_X_PERIODO(d.periodo))
+            .y(d => scale_ABSOLUTO(d.vlr_acu));
+        
+        const v_linha_obrig = $SVG.append("path")
+                    .datum(dados_obrig)
+                    .attr("class", "line obrig layer-step3")
+                    .attr("d", line_acum)
+                    .attr('stroke', scale_COLOR("obrigatoria"))
+                    .attr('stroke-width', 3)
+                    .attr('fill', 'none');
+
+        let comprimento_linha_obrig = v_linha_obrig.node().getTotalLength();
+        console.log("Comprimento linha obrig:", comprimento_linha_obrig);
+
+        v_linha_obrig
+            .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_obrig)
+            .transition()
+            .delay(4000)
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
+
+        const v_linha_discr = $SVG.append("path")
+                    .datum(dados_discr)
+                    .attr("class", "line discr layer-step3")
+                    .attr("d", line_acum)
+                    .attr('stroke', scale_COLOR("discricionaria"))
+                    .attr('stroke-width', 3)
+                    .attr('fill', 'none');
+
+        let comprimento_linha_discr = v_linha_discr.node().getTotalLength();
+        console.log("Comprimento linha discr:", comprimento_linha_discr);
+
+        v_linha_discr
+            .attr("stroke-dasharray", comprimento_linha_discr + " " + comprimento_linha_obrig)
+            .attr("stroke-dashoffset", comprimento_linha_discr)
+            .transition()
+            .delay(4000)
+            .duration(2000)
+            .ease(d3.easeLinear)
+            .attr("stroke-dashoffset", 0);
+
+        $SVG.selectAll(".layer-step3-pontos")
+            .transition()
+            .delay(6000)
+            .duration(500)
+            .attr("opacity", 0)
+            .remove()
         
 
 
     }
 
     // // // Step 4 - Valores e caixa de texto
-    const render_step4 = function(dados_final, dados_obrig, dados_discr) {
+    const render_step4 = function() {
         
         // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
     
@@ -256,6 +316,8 @@ d3.csv("dados.csv", function(d) {
                                 .duration(1000)
                                 .attr("r", 10)
                                 .attr("cy", d => scale_ABSOLUTO(d.vlr_acu));
+
+        
 
     }
     
@@ -383,7 +445,7 @@ d3.csv("dados.csv", function(d) {
 
     // inicio fluxo
     
-    let layer_step1 = render_step1(dados_final);
+    let layer_step1 = render_step1();
 
     d3.selectAll(".nav-stepper li")
       .on("click", function(){
@@ -412,13 +474,13 @@ d3.csv("dados.csv", function(d) {
                 if (step_anterior > step_atual) {
                     $SVG.selectAll(".layer-step2").remove()
                 }
-                render_step1(dados);
+                render_step1();
                 break;              
             case "2":
-                render_step2(dados_extremos);
+                render_step2();
                 break;
             case "3":
-                render_step3(dados_extremos);
+                render_step3();
                 break;
             case "4":
                 render_step4(dados_obrig, dados_discr);
