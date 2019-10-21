@@ -290,12 +290,12 @@ d3.csv("dados.csv", function(d) {
 
         //  mostra inicial
 
-        $SVG.append("rect")
-            .attr("class", "medidor")
+        const $medidor = $SVG.append("rect")
+            .attr("class", "medidor layer3")
             .attr("y", y_inicial)
             .attr("x", w*1/4 - 16 + 1)
             .attr("width", 13) // um pouquinho mais estreito
-            .attr("height", height_inicial)
+            .attr("height", height_inicial-1)
             .attr("fill", scale_COLOR("discricionaria"))
             .attr("stroke-width", 1)
             .attr("stroke", scale_COLOR("obrigatoria"))
@@ -303,12 +303,50 @@ d3.csv("dados.csv", function(d) {
             .duration(500)
             .attr("x", w*1/4 + 16);
 
-        // cria os próximos
-        // selection.clone
+        // cria os próximos retangulos
 
-        let vetor_posicoes_inicial = Array(Math.floor(razao_iniciais));
-        let novo_vetor = vetor_posicoes_inicial.map((x,index) => y_inicial - height_inicial*index)
-        console.log(novo_vetor);
+        let vetor_posicoes_inicial = Array(Math.floor(razao_iniciais)-1).fill(1);
+        vetor_posicoes_inicial = vetor_posicoes_inicial.map((x,index) => y_inicial - height_inicial*(index+1));
+        vetor_posicoes_inicial.push(y_inicial - height_inicial*(razao_iniciais-1));
+
+        let vetor_alturas_inicial = Array(Math.floor(razao_iniciais)-1).fill(+height_inicial);
+        vetor_alturas_inicial.push((razao_iniciais % 1)*height_inicial);
+
+        // popula objeto para fazer o join
+
+        let dataset_temporario = []
+        for (let counter = 0; counter < vetor_posicoes_inicial.length; counter++) {
+            dataset_temporario.push(
+                {"posicoes": vetor_posicoes_inicial[counter],
+                 "alturas": vetor_alturas_inicial[counter]}
+            )
+        }
+        
+        console.log("Posicoes e alturas", dataset_temporario);
+
+        $SVG.selectAll("rect.medidores-adicionais")
+            .data(dataset_temporario)
+            .enter()
+            .append("rect")
+            .attr("opacity", 0)
+            .attr("class", "medidor layer3")
+            .attr("y", d => d.posicoes)
+            .attr("x", w*1/4 + 16)
+            .attr("width", 13) // um pouquinho mais estreito
+            .attr("height", d => d.alturas-1)
+            .attr("fill", scale_COLOR("discricionaria"))
+            .attr("stroke-width", 1)
+            .attr("stroke", scale_COLOR("obrigatoria"))
+            .transition()
+            .delay((d,i) => 1000 + i*500)
+            .attr("opacity", 1);
+
+        // incluir texto
+
+        
+
+
+
 
 
         
