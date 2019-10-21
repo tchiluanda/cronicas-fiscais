@@ -318,7 +318,7 @@ d3.csv("dados.csv", function(d) {
         
         const v_linha_obrig = $SVG.append("path")
                     .datum(dados_obrig)
-                    .attr("class", "line obrig layer-step3")
+                    .attr("class", "line-obrig layer-step3")
                     .attr("d", line_acum)
                     .attr('stroke', scale_COLOR("obrigatoria"))
                     .attr('stroke-width', 3)
@@ -338,7 +338,7 @@ d3.csv("dados.csv", function(d) {
 
         const v_linha_discr = $SVG.append("path")
                     .datum(dados_discr)
-                    .attr("class", "line discr layer-step3")
+                    .attr("class", "line-discr layer-step3")
                     .attr("d", line_acum)
                     .attr('stroke', scale_COLOR("discricionaria"))
                     .attr('stroke-width', 3)
@@ -370,33 +370,32 @@ d3.csv("dados.csv", function(d) {
         
     }
 
-    // // // Step 4 - Valores e caixa de texto
+    // // // Step 4 - Valores relativos
     const render_step4 = function() {
         
-        // não sei por que só funcionou aqui com >=, se não ele só traz uma linha)
-    
-        console.log("Dados pontos");
-        console.table(dados_final);
-  
-        const layer_step1_pontos = $SVG.selectAll("circle")
-                                .data(dados_final)
-                                .enter()
-                                .append("circle")
-                                .attr("cx", d => scale_X_PERIODO(d.periodo))
-                                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu)+25)
-                                .attr("class", "layer-step1")
-                                .attr("r", 0)
-                                .attr("fill", function(d) {
-                                    if (d.tipo_despesa == "obrigatoria") return "steelblue"
-                                    else return "lightcoral"})
-                                .transition()
-                                .duration(1000)
-                                .attr("r", 10)
-                                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu));
+        let $line_obrig = d3.select(".line-obrig");
+        let d0_obrig = $line_obrig.attr("d");
 
-        
+        // função da linha relativa
+        const line_relativa = d3.line()
+            .x(d => scale_X_PERIODO(d.periodo))
+            .y(d => scale_VARIACAO(d.vlr_var));
 
-    }
+        let $line_obrig_relativa = $SVG.append("path")
+            .datum(dados_obrig)            
+            .attr("class", "line-obrig-relativa")
+            .attr("d", line_relativa)
+            .attr("display", "none");
+
+         let d1_obrig = $line_obrig_relativa.attr("d");
+
+         $line_obrig
+             .transition()
+             .duration(2000)
+             .attr('d', d1_obrig);
+
+
+      }
     
     
     
