@@ -157,7 +157,7 @@ d3.csv("dados.csv", function(d) {
         d3.select("#step-" + step).classed("active", true);
     }
     
-    // // // Step 1 - Barras atuais
+    // // // Step 1 - Barras iniciais
     const render_step1 = function() {
 
         console.log("Dados final:")
@@ -173,7 +173,7 @@ d3.csv("dados.csv", function(d) {
                                 .data(dados_inici, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
-                                .attr("class", "layer-step1")
+                                .attr("class", "layer-step1 barras-iniciais")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*1/4 + 15)
@@ -185,11 +185,6 @@ d3.csv("dados.csv", function(d) {
                                 .duration(2000)
                                 .attr("y", d => scale_ABSOLUTO(d.vlr_acu))
                                 .attr("height", d => scale_ABSOLUTO_height(d.vlr_acu));
-
-        /*$SVG.append("g")    
-            .attr("class", "axis y-axis")
-            .attr("transform", "translate(" + PAD + ")")
-            .call(eixo_y_abs); */
 
         // textos
         
@@ -223,14 +218,14 @@ d3.csv("dados.csv", function(d) {
 
     }
 
-    // // // Step 2 - Barras início série
+    // // // Step 2 - Barras fim série
     const render_step2 = function() {
 
         const layer_step2 = $SVG.selectAll("rect")
                                 .data(dados_extremos, d => d.periodo + d.tipo_despesa)
                                 .enter()
                                 .append("rect")
-                                .attr("class", "layer-step2")
+                                .attr("class", "layer-step2 barras-finais")
                                 .attr("y", scale_ABSOLUTO(0))
                                 .attr("x", function(d) {
                                     if (d.tipo_despesa == "obrigatoria") return(w*3/4 + 15)
@@ -274,8 +269,56 @@ d3.csv("dados.csv", function(d) {
 
     };
 
-    // // // Step 3 - Transformação em círculos
+    // // // Step 3 novo - Calcula diferenças
+
     const render_step3 = function() {
+
+        const iniciais = d3.selectAll("rect.barras-iniciais").nodes().map(d => d.getAttribute("height"));
+        const finais   = d3.selectAll("rect.barras-finais").nodes().map(d => d.getAttribute("height"));
+
+        const height_inicial = iniciais[0];
+        const height_final   = finais[0];
+
+        const razao_iniciais = iniciais[1] / iniciais[0];
+        const razao_finais   = finais[1]   / finais[0];
+
+        const y_inicial = d3.selectAll("rect.barras-iniciais").nodes()[0].getAttribute("y");
+        const y_final   = d3.selectAll("rect.barras-finais").nodes()[0].getAttribute("y");
+
+        console.log("Razoes: ", razao_iniciais, razao_finais);
+        console.log("Y's: ", y_inicial, y_final);
+
+        //  mostra inicial
+
+        $SVG.append("rect")
+            .attr("class", "medidor")
+            .attr("y", y_inicial)
+            .attr("x", w*1/4 - 16 + 1)
+            .attr("width", 13) // um pouquinho mais estreito
+            .attr("height", height_inicial)
+            .attr("fill", scale_COLOR("discricionaria"))
+            .attr("stroke-width", 1)
+            .attr("stroke", scale_COLOR("obrigatoria"))
+            .transition()
+            .duration(500)
+            .attr("x", w*1/4 + 16);
+
+        // cria os próximos
+        // selection.clone
+
+        let vetor_posicoes_inicial = Array(Math.floor(razao_iniciais));
+        let novo_vetor = vetor_posicoes_inicial.map((x,index) => y_inicial - height_inicial*index)
+        console.log(novo_vetor);
+
+
+        
+
+        
+
+    };
+
+    // // // Step 4 - Transformação em círculos
+    const render_step4 = function() {
 
         // remove texto
 
@@ -283,18 +326,25 @@ d3.csv("dados.csv", function(d) {
 
         // transforma barras em círculos, e remove
 
+        const height_final = 16;
+        const width_final  = 16;
+
         const layer_step3 = $SVG.selectAll("rect")
                                 .attr("class", "layer-step3-pontos")
                                 .transition()
-                                .duration(2000)
-                                .attr("x", d => scale_X_PERIODO(d.periodo)-5)
-                                .attr("height", 10)
-                                .attr("width", 10)
+                                .duration(1250)
+                                .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)
+                                .attr("y", function() {return (this.getAttribute("y") - height_final/2)})
+                                .attr("height", height_final)
+                                .attr("width", width_final)
+                                .transition()
+                                .duration(750)
                                 .attr("rx", 100)
-                                .attr("ry", 100)
-                                .remove()
+                                .attr("ry", 100);
 
         //  entram círculos
+
+        /*
 
         $SVG.selectAll("circle")
                 .data(dados_extremos)
@@ -309,6 +359,8 @@ d3.csv("dados.csv", function(d) {
                 .delay(1500)
                 .duration(1000)
                 .attr("opacity", 1);
+        
+        */
         
         // create line
 
@@ -370,8 +422,8 @@ d3.csv("dados.csv", function(d) {
         
     }
 
-    // // // Step 4 - Valores relativos
-    const render_step4 = function() {
+    // // // Step 5 - Valores relativos
+    const render_step5 = function() {
         
         let $line_obrig = d3.select(".line-obrig");
         let d0_obrig = $line_obrig.attr("d");
@@ -400,7 +452,7 @@ d3.csv("dados.csv", function(d) {
     
     
     // // // Step 4 - Linhas                    
-    const render_step5 = function(dados_obrig, dados_discr) {
+    const render_step6 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_acum = d3.line()
@@ -452,7 +504,7 @@ d3.csv("dados.csv", function(d) {
     }
 
     // // // Step 5 - Linhas relativas                    
-    const render_step6 = function(dados_obrig, dados_discr) {
+    const render_step7 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_relativa = d3.line()
@@ -556,7 +608,7 @@ d3.csv("dados.csv", function(d) {
                 render_step3();
                 break;
             case "4":
-                render_step4(dados_obrig, dados_discr);
+                render_step4();
                 break;
             case "5":
                 render_step5(dados_obrig, dados_discr);
