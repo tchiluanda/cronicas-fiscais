@@ -413,7 +413,7 @@ d3.csv("dados.csv", function(d) {
 
     };
 
-    // // // Step 5 - Transformação em círculos
+    // // // Step 5 - Transformação em círculos e linhas
     const render_step5 = function() {
 
         // remove texto
@@ -435,7 +435,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("height", height_final)
                                 .attr("width", width_final)
                                 .transition()
-                                .delay(1000)
+                                .delay(800)
                                 .duration(1000)
                                 .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)                            
                                 .attr("rx", 100)
@@ -469,7 +469,7 @@ d3.csv("dados.csv", function(d) {
         
         const v_linha_obrig = $SVG.append("path")
                     .datum(dados_obrig)
-                    .attr("class", "line-obrig layer-step3")
+                    .attr("class", "line line-obrig layer-step3")
                     .attr("d", line_acum)
                     .attr('stroke', scale_COLOR("obrigatoria"))
                     .attr('stroke-width', 3)
@@ -482,14 +482,14 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke-dasharray", comprimento_linha_obrig + " " + comprimento_linha_obrig)
             .attr("stroke-dashoffset", comprimento_linha_obrig)
             .transition()
-            .delay(4000)
+            .delay(3000)
             .duration(2000)
             .ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
 
         const v_linha_discr = $SVG.append("path")
                     .datum(dados_discr)
-                    .attr("class", "line-discr layer-step3")
+                    .attr("class", "line line-discr layer-step3")
                     .attr("d", line_acum)
                     .attr('stroke', scale_COLOR("discricionaria"))
                     .attr('stroke-width', 3)
@@ -524,36 +524,32 @@ d3.csv("dados.csv", function(d) {
     // // // Step 6 - Valores relativos
     const render_step6 = function() {
         
-        let $line_obrig = d3.select(".line-obrig");
-        //let d0_obrig = $line_obrig.attr("d");
+        // remove os pontos / rects
+        $SVG.selectAll("rect.layer-step3-pontos")
+            .transition()
+            .duration(1000)
+            .attr('width', 0)
+            .attr('height', 0)
+            .remove();
 
         // função da linha relativa
         const line_relativa = d3.line()
             .x(d => scale_X_PERIODO(d.periodo))
             .y(d => scale_VARIACAO(d.vlr_var));
 
-        /*let $line_obrig_relativa = $SVG.append("path")
-            .datum(dados_obrig)            
-            .attr("class", "line-obrig-relativa")
-            .attr("d", line_relativa)
-            .attr("display", "none");
+        // olha que coisa bonita: não preciso selecionar 
+        // as linhas individualmente, posso selecionar ambas
+        // e simplesmente pedir para aplicar uma nova função
+        // geradora do "d", já que cada linha traz embutida em
+        // si o "data" correto, graças ao data join no passo anterior.
 
-         let d1_obrig = $line_obrig_relativa.attr("d");
-
-         $line_obrig
-             .attr('d', d0_obrig)
+        $SVG.selectAll("path.line")
              .attr('stroke-dasharray', null)
              .attr('stroke-dashoffset', null)
              .transition()
-             .duration(2000)
-             .attr('d', d1_obrig); */
-        $line_obrig
-             .attr('stroke-dasharray', null)
-             .attr('stroke-dashoffset', null)
-             .transition()
+             .delay(1000)
              .duration(2000)
              .attr("d", line_relativa);
-
       }
     
     
