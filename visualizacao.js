@@ -297,16 +297,20 @@ d3.csv("dados.csv", function(d) {
             var razao = razao_iniciais;
             var y_0s = y_iniciais;
             var y_0 = y_inicial;
-            var x = w*1/4 - 16;
+            var x0 = w*1/4 - 16;
+            var xend = w*1/4 + 16
             var x_comentario = w*1/4 + 40;
+            var layer = "layer3";
             console.log("dentro if", inicial_ou_final, altura, y_0);
         } else {
             var altura = height_final;
             var razao = razao_finais;
             var y_0s = y_finais;
             var y_0 = y_final;
-            var x = w*3/4 - 16;
+            var x0 = w*3/4 - 16;
+            var xend = w*3/4 + 16
             var x_comentario = w*3/4 + 40;
+            var layer = "layer4";
         }
 
         console.log("fora if", inicial_ou_final, altura, y_0);
@@ -320,9 +324,9 @@ d3.csv("dados.csv", function(d) {
         //  mostra primeiro medidor, inicial
 
         const $medidor = $SVG.append("rect")
-            .attr("class", "medidor layer3")
+            .attr("class", "medidor "+layer)
             .attr("y", y_0)
-            .attr("x", x + 1)
+            .attr("x", x0 + 1)
             .attr("width", 13) // um pouquinho mais estreito
             .attr("height", altura-1)
             .attr("fill", scale_COLOR("discricionaria"))
@@ -330,12 +334,12 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke", scale_COLOR("obrigatoria"))
             .transition()
             .duration(500)
-            .attr("x", x);
+            .attr("x", xend);
 
-        // cria os próximos retangulos
+        // cria os próximos retangulos/medidores
 
         let vetor_posicoes = Array(Math.floor(razao)-1).fill(1);
-        vetor_posicoes = vetor_posicoes.map((x,index) => y_inicial - height_inicial*(index+1));
+        vetor_posicoes = vetor_posicoes.map((x,index) => y_0 - altura*(index+1));
         vetor_posicoes.push(y_0 - altura*(razao-1));
 
         let vetor_alturas = Array(Math.floor(razao)-1).fill(+altura);
@@ -351,6 +355,8 @@ d3.csv("dados.csv", function(d) {
             )
         }
 
+        /*
+
         // popula objeto para animar valores
         let vetor_valores = []
         for (let i = 0; i <= parseInt(razao); i++) {
@@ -359,9 +365,8 @@ d3.csv("dados.csv", function(d) {
             else next = i + 1
             vetor_valores.push(next);
         }     
-        console.log("Vetor valores", vetor_valores);
-    
-        
+        console.log("Vetor valores", vetor_valores);*/
+            
         console.log("Posicoes e alturas", dataset_temporario);
 
         $SVG.selectAll("rect.medidores-adicionais")
@@ -369,9 +374,9 @@ d3.csv("dados.csv", function(d) {
             .enter()
             .append("rect")
             .attr("opacity", 0)
-            .attr("class", "medidor layer3")
+            .attr("class", "medidor "+layer)
             .attr("y", d => d.posicoes)
-            .attr("x", x)
+            .attr("x", xend)
             .attr("width", 13) // um pouquinho mais estreito
             .attr("height", d => d.alturas-1)
             .attr("fill", scale_COLOR("discricionaria"))
@@ -380,27 +385,31 @@ d3.csv("dados.csv", function(d) {
             .transition()
             .delay((d,i) => 1000 + i*500)
             .attr("opacity", 1);
-
++
         // incluir texto
 
-        d3.select("#annotation-1 div.caixa-valor").selectAll("p.valor")
-            .data(vetor_valores)
-            .enter()
-            .append("p")
-            .attr("class", "valor layer3")
-            .text("")
-            .transition()
-            .delay((d,i) => 1000 + i*500)
-            .text(d => formataBR_1casa(d));
+        d3.select("#annotation-" + inicial_ou_final + " p.valor")
+            .attr("class", "valor "+layer)
+            .text(formataBR_1casa(razao)+"x");
 
-        d3.select("div.comentarios > #annotation-1")
+        d3.select("div.comentarios > #annotation-" + inicial_ou_final)
             .style("left", x_comentario + "px")
             .style("top", y_0s[1] + "px")
             .classed("invisivel", false)
             .style("opacity", 0)
             .transition()
+            .delay(1000 + dataset_temporario.length * 500)
             .duration(500)
             .style("opacity", 1);
+        
+        // remove medidores antes do próximo passo
+
+        d3.selectAll("rect.medidor")
+          .transition()
+          .delay(3000 + dataset_temporario.length * 500)
+          .duration(500)
+          .attr("opacity", 0)
+          .remove()
 
     };
 

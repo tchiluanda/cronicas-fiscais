@@ -109,6 +109,8 @@ div.narrativa {
     text-align: center;
 }
 
+/* comentários */
+
 .comentarios {
     background-color: aquamarine;
     position: relative;
@@ -127,7 +129,7 @@ div.narrativa {
 }
 
 .annotation {
-    font-size: 12px;
+    font-size: 10px;
     position: absolute;
     width: 90px;
     height: auto;
@@ -138,8 +140,7 @@ div.narrativa {
     position: relative;
 }
 
-.annotation .caixa-valor .valor, 
-.annotation .caixa-valor .referencia {
+.annotation p.valor {
     font-size: 20px;
     color: #E32C10;
     font-weight: bold;
