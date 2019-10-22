@@ -583,7 +583,24 @@ d3.csv("dados.csv", function(d) {
             .transition()
             .delay(1000)
             .duration(2000)
-            .attr("r", 8)
+            .attr("r", 5)
+            .attr("opacity", 1);
+
+        $SVG.selectAll("text.labels-valores-linha")
+            .data(dados_final)
+            .enter()
+            .append("text")
+            .attr("class", "label-valores-linha")
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "central")
+            .attr("fill", d => scale_COLOR_text(d.tipo_despesa))
+            .text(d => (d.vlr_var-1>0 ? "+" : "") + formataBR((d.vlr_var-1)*100) + "%")
+            .attr("y", d => scale_VARIACAO(d.vlr_var))
+            .attr("x", d => scale_X_PERIODO(d.periodo) + 5)
+            .attr("opacity", 0)
+            .transition()
+            .delay(2000)
+            .duration(1000)
             .attr("opacity", 1);
       }
 

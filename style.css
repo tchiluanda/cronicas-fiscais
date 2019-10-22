@@ -59,6 +59,10 @@ div.narrativa {
     fill: lightslategray;
 }
 
+.label-valores-linha {
+    font-size: 0.7rem;
+}
+
 .label-inicial {
     font-size: 0.6rem;
     fill: lightslategray;
