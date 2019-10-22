@@ -87,7 +87,11 @@ d3.csv("dados.csv", function(d) {
          
     const eixo_y_abs = d3.axisLeft()
                 .scale(scale_ABSOLUTO)
-                .tickFormat(function(d) {return formataBR(d/1e3)});
+                .tickFormat(d => formataBR(d/1e3));
+
+    const eixo_y_var = d3.axisLeft()
+                .scale(scale_VARIACAO)
+                .tickFormat(function(d) {return formataBR_1casa(d)});                  
 
     const eixo_x_data = d3.axisBottom()
                 .scale(scale_X_PERIODO)
@@ -440,27 +444,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)                            
                                 .attr("rx", 100)
                                 .attr("ry", 100);
-
-        //  entram círculos
-
-        /*
-
-        $SVG.selectAll("circle")
-                .data(dados_extremos)
-                .enter()
-                .append("circle")
-                .attr("opacity", 0)
-                .attr("cx", d => scale_X_PERIODO(d.periodo))
-                .attr("cy", d => scale_ABSOLUTO(d.vlr_acu))
-                .attr("fill", d => scale_COLOR(d.tipo_despesa))
-                .attr("r", 8)
-                .transition()
-                .delay(1500)
-                .duration(1000)
-                .attr("opacity", 1);
-        
-        */
-        
+       
         // create line
 
         const line_acum = d3.line()
@@ -518,6 +502,30 @@ d3.csv("dados.csv", function(d) {
             .delay(4000)
             .duration(2000)
             .attr("opacity", 1);
+
+        $SVG.append("g") 
+            .attr("class", "axis y-axis")
+            .attr("transform", "translate(" + PAD + ",0)")
+            .attr("opacity", 0)
+            .call(eixo_y_abs)
+            .transition()
+            .delay(4000)
+            .duration(2000)
+            .attr("opacity", 1);
+
+        $SVG.append("text")
+            .attr("class", "titulo-eixo")
+            .attr("opacity", 0)
+            .attr("y", PAD - 10)
+            .attr("x", 30)
+            .attr("text-anchor", "middle")
+            .text("R$ mi")
+            .transition()
+            .delay(4000)
+            .duration(2000)
+            .attr("opacity", 1);
+
+
         
     }
 
@@ -550,7 +558,37 @@ d3.csv("dados.csv", function(d) {
              .delay(1000)
              .duration(2000)
              .attr("d", line_relativa);
+
+        $SVG.select("g.y-axis")
+             .transition()
+             .delay(1000)
+             .duration(2000)
+             .call(eixo_y_var);
+
+        $SVG.select("text.titulo-eixo")
+            .transition()
+            .delay(1000)
+            .duration(2000)
+            .attr("opacity", 0)
+
+        $SVG.selectAll("circle")
+            .data(dados_final)
+            .enter()
+            .append("circle")
+            .attr("opacity", 0)
+            .attr('r', 0)
+            .attr("cx", d => scale_X_PERIODO(d.periodo))
+            .attr("cy", d => scale_VARIACAO(d.vlr_var))
+            .attr("fill", d => scale_COLOR(d.tipo_despesa))
+            .transition()
+            .delay(1000)
+            .duration(2000)
+            .attr("r", 8)
+            .attr("opacity", 1);
       }
+
+
+
     
     
     

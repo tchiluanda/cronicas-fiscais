@@ -53,17 +53,23 @@ div.narrativa {
     font-family: 'Merriweather Sans', sans-serif;
 }
 
+.titulo-eixo {
+    font-size: 0.6rem;
+    font-family: 'Merriweather Sans', sans-serif;
+    fill: lightslategray;
+}
+
 .label-inicial {
     font-size: 0.6rem;
     fill: lightslategray;
 }
 
-.x-axis text {
+.axis text, text.label-inicial {
     fill: lightslategray;
     font-family: 'Merriweather Sans', sans-serif;
 }
 
-.x-axis line, .x-axis path {
+.axis line, .axis path {
     stroke: lightslategray;
 }
 
