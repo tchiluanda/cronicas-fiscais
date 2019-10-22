@@ -525,14 +525,14 @@ d3.csv("dados.csv", function(d) {
     const render_step6 = function() {
         
         let $line_obrig = d3.select(".line-obrig");
-        let d0_obrig = $line_obrig.attr("d");
+        //let d0_obrig = $line_obrig.attr("d");
 
         // função da linha relativa
         const line_relativa = d3.line()
             .x(d => scale_X_PERIODO(d.periodo))
             .y(d => scale_VARIACAO(d.vlr_var));
 
-        let $line_obrig_relativa = $SVG.append("path")
+        /*let $line_obrig_relativa = $SVG.append("path")
             .datum(dados_obrig)            
             .attr("class", "line-obrig-relativa")
             .attr("d", line_relativa)
@@ -546,7 +546,13 @@ d3.csv("dados.csv", function(d) {
              .attr('stroke-dashoffset', null)
              .transition()
              .duration(2000)
-             .attr('d', d1_obrig);
+             .attr('d', d1_obrig); */
+        $line_obrig
+             .attr('stroke-dasharray', null)
+             .attr('stroke-dashoffset', null)
+             .transition()
+             .duration(2000)
+             .attr("d", line_relativa);
 
       }
     
