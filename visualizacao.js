@@ -409,16 +409,18 @@ d3.csv("dados.csv", function(d) {
           .delay(3000 + dataset_temporario.length * 500)
           .duration(500)
           .attr("opacity", 0)
-          .remove()
+          .remove();
 
     };
 
-    // // // Step 4 - Transformação em círculos
-    const render_step4 = function() {
+    // // // Step 5 - Transformação em círculos
+    const render_step5 = function() {
 
         // remove texto
 
-        $SVG.selectAll("text").transition().duration(1000).attr("opacity", 0).remove()
+        $SVG.selectAll("text").transition().duration(1000).attr("opacity", 0).remove();
+        
+        d3.selectAll("div.annotation").attr("opacity", 1).transition().duration(500).attr("opacity", 0).remove();
 
         // transforma barras em círculos, e remove
 
@@ -428,13 +430,14 @@ d3.csv("dados.csv", function(d) {
         const layer_step3 = $SVG.selectAll("rect")
                                 .attr("class", "layer-step3-pontos")
                                 .transition()
-                                .duration(1250)
-                                .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)
+                                .duration(1000)
                                 .attr("y", function() {return (this.getAttribute("y") - height_final/2)})
                                 .attr("height", height_final)
                                 .attr("width", width_final)
                                 .transition()
-                                .duration(750)
+                                .delay(1000)
+                                .duration(1000)
+                                .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)                            
                                 .attr("rx", 100)
                                 .attr("ry", 100);
 
@@ -518,8 +521,8 @@ d3.csv("dados.csv", function(d) {
         
     }
 
-    // // // Step 5 - Valores relativos
-    const render_step5 = function() {
+    // // // Step 6 - Valores relativos
+    const render_step6 = function() {
         
         let $line_obrig = d3.select(".line-obrig");
         let d0_obrig = $line_obrig.attr("d");
@@ -538,17 +541,19 @@ d3.csv("dados.csv", function(d) {
          let d1_obrig = $line_obrig_relativa.attr("d");
 
          $line_obrig
+             .attr('d', d0_obrig)
+             .attr('stroke-dasharray', null)
+             .attr('stroke-dashoffset', null)
              .transition()
              .duration(2000)
              .attr('d', d1_obrig);
-
 
       }
     
     
     
-    // // // Step 4 - Linhas                    
-    const render_step6 = function(dados_obrig, dados_discr) {
+    // // // Step 7 - Linhas                    
+    const render_step7 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_acum = d3.line()
@@ -599,8 +604,8 @@ d3.csv("dados.csv", function(d) {
             .attr("stroke-dashoffset", 0);
     }
 
-    // // // Step 5 - Linhas relativas                    
-    const render_step7 = function(dados_obrig, dados_discr) {
+    // // // Step 8 - Linhas relativas                    
+    const render_step8 = function(dados_obrig, dados_discr) {
         
         // create line
         const line_relativa = d3.line()
@@ -681,7 +686,7 @@ d3.csv("dados.csv", function(d) {
          // caracteres, mas um só, o próprio número.
 
          if (step_clicado == "next") {
-             if (step_atual != 4) step_atual += 1;                  
+             if (step_atual != 7) step_atual += 1;                  
          } else if (step_clicado == "prev") {
              if (step_atual != 1) step_atual -= 1;
          } else step_atual = +step_clicado; // esse caso vai ser o em que
@@ -707,8 +712,11 @@ d3.csv("dados.csv", function(d) {
                 render_step3_4("final");
                 break;
             case "5":
-                render_step5(dados_obrig, dados_discr);
+                render_step5();
                 break;
+            case "6":
+                render_step6();
+                break;                
           }
         
         console.log("Step atual:", step_atual);
