@@ -270,9 +270,11 @@ d3.csv("dados.csv", function(d) {
 
     };
 
-    // // // Step 3 novo - Calcula diferenças
+    // // // Step 3, 4 novo - Calcula diferenças iniciais
 
-    const render_step3 = function() {
+    const render_step3_4 = function(inicial_ou_final) {
+
+        console.log(inicial_ou_final, inicial_ou_final == "inicial");
 
         const iniciais = d3.selectAll("rect.barras-iniciais").nodes().map(d => d.getAttribute("height"));
         const finais   = d3.selectAll("rect.barras-finais").nodes().map(d => d.getAttribute("height"));
@@ -289,55 +291,75 @@ d3.csv("dados.csv", function(d) {
         const y_inicial = y_iniciais[0];
         const y_final   = y_finais[0];
 
+        if (inicial_ou_final == "inicial") {
+            console.log("Aqui!");
+            var altura = height_inicial;
+            var razao = razao_iniciais;
+            var y_0s = y_iniciais;
+            var y_0 = y_inicial;
+            var x = w*1/4 - 16;
+            var x_comentario = w*1/4 + 40;
+            console.log("dentro if", inicial_ou_final, altura, y_0);
+        } else {
+            var altura = height_final;
+            var razao = razao_finais;
+            var y_0s = y_finais;
+            var y_0 = y_final;
+            var x = w*3/4 - 16;
+            var x_comentario = w*3/4 + 40;
+        }
+
+        console.log("fora if", inicial_ou_final, altura, y_0);
+
         //const y_inicial = d3.selectAll("rect.barras-iniciais").nodes()[0].getAttribute("y");
         //const y_final   = d3.selectAll("rect.barras-finais").nodes()[0].getAttribute("y");
 
-        console.log("Razoes: ", razao_iniciais, razao_finais);
-        console.log("Y's: ", y_inicial, y_final);
+        //console.log("Razoes: ", razao_iniciais, razao_finais);
+        //console.log("Y's: ", y_inicial, y_final);
 
         //  mostra primeiro medidor, inicial
 
         const $medidor = $SVG.append("rect")
             .attr("class", "medidor layer3")
-            .attr("y", y_inicial)
-            .attr("x", w*1/4 - 16 + 1)
+            .attr("y", y_0)
+            .attr("x", x + 1)
             .attr("width", 13) // um pouquinho mais estreito
-            .attr("height", height_inicial-1)
+            .attr("height", altura-1)
             .attr("fill", scale_COLOR("discricionaria"))
             .attr("stroke-width", 1)
             .attr("stroke", scale_COLOR("obrigatoria"))
             .transition()
             .duration(500)
-            .attr("x", w*1/4 + 16);
+            .attr("x", x);
 
         // cria os próximos retangulos
 
-        let vetor_posicoes_inicial = Array(Math.floor(razao_iniciais)-1).fill(1);
-        vetor_posicoes_inicial = vetor_posicoes_inicial.map((x,index) => y_inicial - height_inicial*(index+1));
-        vetor_posicoes_inicial.push(y_inicial - height_inicial*(razao_iniciais-1));
+        let vetor_posicoes = Array(Math.floor(razao)-1).fill(1);
+        vetor_posicoes = vetor_posicoes.map((x,index) => y_inicial - height_inicial*(index+1));
+        vetor_posicoes.push(y_0 - altura*(razao-1));
 
-        let vetor_alturas_inicial = Array(Math.floor(razao_iniciais)-1).fill(+height_inicial);
-        vetor_alturas_inicial.push((razao_iniciais % 1)*height_inicial);
+        let vetor_alturas = Array(Math.floor(razao)-1).fill(+altura);
+        vetor_alturas.push((razao % 1)*altura);
 
         // popula objeto para fazer o join
 
         let dataset_temporario = []
-        for (let counter = 0; counter < vetor_posicoes_inicial.length; counter++) {
+        for (let i = 0; i < vetor_posicoes.length; i++) {
             dataset_temporario.push(
-                {"posicoes": vetor_posicoes_inicial[counter],
-                 "alturas": vetor_alturas_inicial[counter]}
+                {"posicoes": vetor_posicoes[i],
+                 "alturas": vetor_alturas[i]}
             )
         }
 
         // popula objeto para animar valores
-        let vetor_valores_iniciais = []
-        for (let i = 0; i <= parseInt(razao_iniciais); i++) {
+        let vetor_valores = []
+        for (let i = 0; i <= parseInt(razao); i++) {
             let next = 0;
-            if (i == parseInt(razao_iniciais)) next = razao_iniciais
+            if (i == parseInt(razao)) next = razao
             else next = i + 1
-            vetor_valores_iniciais.push(next);
+            vetor_valores.push(next);
         }     
-        console.log("Vetor valores", vetor_valores_iniciais);
+        console.log("Vetor valores", vetor_valores);
     
         
         console.log("Posicoes e alturas", dataset_temporario);
@@ -349,7 +371,7 @@ d3.csv("dados.csv", function(d) {
             .attr("opacity", 0)
             .attr("class", "medidor layer3")
             .attr("y", d => d.posicoes)
-            .attr("x", w*1/4 + 16)
+            .attr("x", x)
             .attr("width", 13) // um pouquinho mais estreito
             .attr("height", d => d.alturas-1)
             .attr("fill", scale_COLOR("discricionaria"))
@@ -362,7 +384,7 @@ d3.csv("dados.csv", function(d) {
         // incluir texto
 
         d3.select("#annotation-1 div.caixa-valor").selectAll("p.valor")
-            .data(vetor_valores_iniciais)
+            .data(vetor_valores)
             .enter()
             .append("p")
             .attr("class", "valor layer3")
@@ -372,23 +394,13 @@ d3.csv("dados.csv", function(d) {
             .text(d => formataBR_1casa(d));
 
         d3.select("div.comentarios > #annotation-1")
-            .style("left", w*1/4 + 40 + "px")
-            .style("top", y_iniciais[1] + "px")
+            .style("left", x_comentario + "px")
+            .style("top", y_0s[1] + "px")
             .classed("invisivel", false)
             .style("opacity", 0)
             .transition()
             .duration(500)
             .style("opacity", 1);
-
-        
-
-
-
-
-
-        
-
-        
 
     };
 
@@ -680,10 +692,10 @@ d3.csv("dados.csv", function(d) {
                 render_step2();
                 break;
             case "3":
-                render_step3();
+                render_step3_4("inicial");
                 break;
             case "4":
-                render_step4();
+                render_step3_4("final");
                 break;
             case "5":
                 render_step5(dados_obrig, dados_discr);
