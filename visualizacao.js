@@ -126,6 +126,7 @@ d3.csv("dados.csv", function(d) {
         "currency": ["R$", ""]};
     
     let formataBR = d3.formatDefaultLocale(localeBrasil).format(",.0f");
+    let formataBR_1casa = d3.formatDefaultLocale(localeBrasil).format(",.1f");
     let formataData = d3.timeFormat("%b %Y");
 
     console.log("Periodo formatado:", formataData(PERIODO[0]));
@@ -282,13 +283,19 @@ d3.csv("dados.csv", function(d) {
         const razao_iniciais = iniciais[1] / iniciais[0];
         const razao_finais   = finais[1]   / finais[0];
 
-        const y_inicial = d3.selectAll("rect.barras-iniciais").nodes()[0].getAttribute("y");
-        const y_final   = d3.selectAll("rect.barras-finais").nodes()[0].getAttribute("y");
+        const y_iniciais = d3.selectAll("rect.barras-iniciais").nodes().map(d => d.getAttribute("y"));
+        const y_finais = d3.selectAll("rect.barras-finais").nodes().map(d => d.getAttribute("y"));
+
+        const y_inicial = y_iniciais[0];
+        const y_final   = y_finais[0];
+
+        //const y_inicial = d3.selectAll("rect.barras-iniciais").nodes()[0].getAttribute("y");
+        //const y_final   = d3.selectAll("rect.barras-finais").nodes()[0].getAttribute("y");
 
         console.log("Razoes: ", razao_iniciais, razao_finais);
         console.log("Y's: ", y_inicial, y_final);
 
-        //  mostra inicial
+        //  mostra primeiro medidor, inicial
 
         const $medidor = $SVG.append("rect")
             .attr("class", "medidor layer3")
@@ -321,6 +328,17 @@ d3.csv("dados.csv", function(d) {
                  "alturas": vetor_alturas_inicial[counter]}
             )
         }
+
+        // popula objeto para animar valores
+        let vetor_valores_iniciais = []
+        for (let i = 0; i <= parseInt(razao_iniciais); i++) {
+            let next = 0;
+            if (i == parseInt(razao_iniciais)) next = razao_iniciais
+            else next = i + 1
+            vetor_valores_iniciais.push(next);
+        }     
+        console.log("Vetor valores", vetor_valores_iniciais);
+    
         
         console.log("Posicoes e alturas", dataset_temporario);
 
@@ -342,6 +360,25 @@ d3.csv("dados.csv", function(d) {
             .attr("opacity", 1);
 
         // incluir texto
+
+        d3.select("#annotation-1 div.caixa-valor").selectAll("p.valor")
+            .data(vetor_valores_iniciais)
+            .enter()
+            .append("p")
+            .attr("class", "valor layer3")
+            .text("")
+            .transition()
+            .delay((d,i) => 1000 + i*500)
+            .text(d => formataBR_1casa(d));
+
+        d3.select("div.comentarios > #annotation-1")
+            .style("left", w*1/4 + 40 + "px")
+            .style("top", y_iniciais[1] + "px")
+            .classed("invisivel", false)
+            .style("opacity", 0)
+            .transition()
+            .duration(500)
+            .style("opacity", 1);
 
         
 

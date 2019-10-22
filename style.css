@@ -111,18 +111,49 @@ div.narrativa {
 
 .comentarios {
     background-color: aquamarine;
+    position: relative;
 }
 
 .comentario {
     font-size: 12px;
     position: absolute;
-    width: 180px;
+    width: 90px;
     height: auto;
     background-color: ghostwhite;
     color: #333;
     box-shadow: 0 4px 4px rgba(0,0,0,0.25);
     pointer-events: none;
     padding: .5rem .75rem;
+}
+
+.annotation {
+    font-size: 12px;
+    position: absolute;
+    width: 90px;
+    height: auto;
+    color: #333;
+}
+
+.annotation .caixa-valor {
+    position: relative;
+}
+
+.annotation .caixa-valor .valor, 
+.annotation .caixa-valor .referencia {
+    font-size: 20px;
+    color: #E32C10;
+    font-weight: bold;
+}
+
+.annotation .caixa-valor .valor {
+    position: absolute;
+    top: 0;
+    background-color: white; 
+}
+
+.annotation p {
+    margin: 0;
+    line-height: 1.5;
 }
 
 .invisivel {
