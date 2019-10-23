@@ -33,7 +33,7 @@ section#vis {
 
 section#vis h1 {
     text-align: center;
-    color: #E32C10
+    color: #E32C10;
 }
 
 div.narrativa {
@@ -44,10 +44,41 @@ div.narrativa {
     font-size: 0.8rem;
 }
 
+/*
+
 div.narrativa #botao-proximo {
     font-weight: bold;
+
+}
+
+.proximo-ativo {
+    color: #E32C10;
     cursor: pointer;
 }
+*/
+
+.proximo-inativo {
+    color: slategray;
+    cursor: auto;
+}
+
+/*
+.piscante {
+    font-weight: bold;
+    cursor: pointer;
+    color: #2E3D48;
+    animation: 1s blink step-end infinite;
+}
+
+@keyframes "blink" {
+    from, to {
+      color: transparent;
+    }
+    50% {
+      color: #E32C10;
+    }
+  }
+  */
 
 .textos-steps {    
 }
@@ -57,7 +88,7 @@ div.narrativa #botao-proximo {
     font-family: 'Merriweather Sans', sans-serif;
 }
 
-.titulo-eixo {
+.titulo-eixo, .titulo-eixo-var {
     font-size: 0.6rem;
     font-family: 'Merriweather Sans', sans-serif;
     fill: lightslategray;
@@ -91,6 +122,7 @@ div.narrativa #botao-proximo {
     display: flex;
     flex-direction: row;
     padding: 0;
+    margin: 10px auto;
 }
 
 .nav-stepper li {

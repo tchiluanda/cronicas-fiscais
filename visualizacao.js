@@ -135,35 +135,25 @@ d3.csv("dados.csv", function(d) {
 
     console.log("Periodo formatado:", formataData(PERIODO[0]));
 
-    function pathTween(d1, precision) {
-        return function() {
-          var path0 = this,
-              path1 = path0.cloneNode(),
-              n0 = path0.getTotalLength(),
-              n1 = (path1.setAttribute("d", d1), path1).getTotalLength();
-          // Uniform sampling of distance based on specified precision.
-          var distances = [0], i = 0, dt = precision / Math.max(n0, n1);
-          while ((i += dt) < 1) distances.push(i);
-          distances.push(1);
-          // Compute point-interpolators at each distance.
-          var points = distances.map(function(t) {
-            var p0 = path0.getPointAtLength(t * n0),
-                p1 = path1.getPointAtLength(t * n1);
-            return d3.interpolate([p0.x, p0.y], [p1.x, p1.y]);
-          });
-          return function(t) {
-            return t < 1 ? "M" + points.map(function(p) { return p(t); }).join("L") : d1;
-          };
-        };
-      }
-
     const switch_step = function(step) {
         d3.selectAll(".steps li").classed("active", false);
         d3.select("#step-" + step).classed("active", true);
     }
+
+    /*const botao_inativo = function() {
+        d3.select("#botao-proximo").classed("proximo-inativo", true);
+    }*/
+
+    const botao_ativo = function(espera) {
+        d3.select("#botao-proximo").classed("proximo-inativo", false);
+        d3.select("#botao-proximo").style("color", "slategray").style("font-weight", "normal").style("cursor", "auto");
+        d3.select("#botao-proximo").transition().delay(espera).style("color", "#E32C10").style("font-weight", "bold").style("cursor", "pointer");
+    }
     
     // // // Step 1 - Barras iniciais
     const render_step1 = function() {
+
+        botao_ativo(3100);
 
         console.log("Dados final:")
         console.table(dados_final);
@@ -226,6 +216,9 @@ d3.csv("dados.csv", function(d) {
     // // // Step 2 - Barras fim série
     const render_step2 = function() {
 
+        
+        botao_ativo(3100);
+
         const layer_step2 = $SVG.selectAll("rect")
                                 .data(dados_extremos, d => d.periodo + d.tipo_despesa)
                                 .enter()
@@ -277,6 +270,8 @@ d3.csv("dados.csv", function(d) {
     // // // Step 3, 4 novo - Calcula diferenças iniciais
 
     const render_step3_4 = function(inicial_ou_final) {
+
+       // controle do botão lá embaixo
 
         console.log(inicial_ou_final, inicial_ou_final == "inicial");
 
@@ -389,7 +384,7 @@ d3.csv("dados.csv", function(d) {
             .transition()
             .delay((d,i) => 1000 + i*500)
             .attr("opacity", 1);
-+
+
         // incluir texto
 
         d3.select("#annotation-" + inicial_ou_final + " p.valor")
@@ -415,10 +410,15 @@ d3.csv("dados.csv", function(d) {
           .attr("opacity", 0)
           .remove();
 
+        
+        botao_ativo(3000 + dataset_temporario.length * 500);
+
     };
 
     // // // Step 5 - Transformação em círculos e linhas
     const render_step5 = function() {
+
+        botao_ativo(6100);
 
         // remove texto
 
@@ -524,13 +524,13 @@ d3.csv("dados.csv", function(d) {
             .delay(4000)
             .duration(2000)
             .attr("opacity", 1);
-
-
         
     }
 
     // // // Step 6 - Valores relativos
     const render_step6 = function() {
+
+        botao_ativo(3100);
         
         // remove os pontos / rects
         $SVG.selectAll("rect.layer-step3-pontos")
