@@ -730,17 +730,19 @@ d3.csv("dados.csv", function(d) {
     
     let layer_step1 = render_step1();
 
-    d3.selectAll(".nav-stepper li")
+    d3.selectAll("#botao-proximo")
       .on("click", function(){
-         console.log("Estou no listener dos steps. O this é", this);
+        console.log("Estou no listener dos steps. O this é", this);
 
-         const step_anterior = step_atual;
+        const step_anterior = step_atual;
 
-         console.log("Step atual:", step_anterior);
+        console.log("Step atual:", step_anterior);
          
-         let step_clicado = d3.select(this).attr("id").substr(5,4);
+         //let step_clicado = d3.select(this).attr("id").substr(5,4);
          // se o usuário clicar no número, essa substr não vai ter 4 
          // caracteres, mas um só, o próprio número.
+
+         /*
 
          if (step_clicado == "next") {
              if (step_atual != 7) step_atual += 1;                  
@@ -749,32 +751,34 @@ d3.csv("dados.csv", function(d) {
          } else step_atual = +step_clicado; // esse caso vai ser o em que
                                            // o objeto clicado é um step
                                            // propriamente dito
+        */
+        step_atual += 1;
           
-          switch_step(step_atual);
+        switch_step(step_atual);
 
-          switch (""+step_atual) {
-            case "1":
-                if (step_anterior > step_atual) {
-                    $SVG.selectAll(".layer-step2").remove()
-                }
-                render_step1();
-                break;              
-            case "2":
-                render_step2();
-                break;
-            case "3":
-                render_step3_4("inicial");
-                break;
-            case "4":
-                render_step3_4("final");
-                break;
-            case "5":
-                render_step5();
-                break;
-            case "6":
-                render_step6();
-                break;                
-          }
+        switch (""+step_atual) {
+        case "1":
+            if (step_anterior > step_atual) {
+                $SVG.selectAll(".layer-step2").remove()
+            }
+            render_step1();
+            break;              
+        case "2":
+            render_step2();
+            break;
+        case "3":
+            render_step3_4("inicial");
+            break;
+        case "4":
+            render_step3_4("final");
+            break;
+        case "5":
+            render_step5();
+            break;
+        case "6":
+            render_step6();
+            break;                
+        }
         
         console.log("Step atual:", step_atual);
 

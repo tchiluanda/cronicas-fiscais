@@ -37,15 +37,19 @@ section#vis h1 {
 }
 
 div.narrativa {
-    background-color: cornsilk;
+    background: rgba(255,255,255,.85);
+    box-shadow: 1px 1px 3px rgba(0,0,0,.1);
     color: slategray;
-    padding: 10px;
+    padding: 20px;
     font-size: 0.8rem;
 }
 
-.textos-steps {
-    background-color: ghostwhite;
-    padding: 10px;
+div.narrativa #botao-proximo {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.textos-steps {    
 }
 
 .text-label {
