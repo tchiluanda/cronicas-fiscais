@@ -91,7 +91,7 @@ d3.csv("dados.csv", function(d) {
 
     const eixo_y_var = d3.axisLeft()
                 .scale(scale_VARIACAO)
-                .tickFormat(function(d) {return formataBR_1casa(d)});                  
+                .tickFormat(function(d) {return formataBR((d-1)*100)+"%"});                  
 
     const eixo_x_data = d3.axisBottom()
                 .scale(scale_X_PERIODO)
@@ -439,7 +439,7 @@ d3.csv("dados.csv", function(d) {
                                 .attr("height", height_final)
                                 .attr("width", width_final)
                                 .transition()
-                                .delay(800)
+                                .delay(500)
                                 .duration(1000)
                                 .attr("x", d => scale_X_PERIODO(d.periodo)-width_final/2)                            
                                 .attr("rx", 100)
@@ -598,6 +598,26 @@ d3.csv("dados.csv", function(d) {
             .attr("y", d => scale_VARIACAO(d.vlr_var))
             .attr("x", d => scale_X_PERIODO(d.periodo) + 5)
             .attr("opacity", 0)
+            .transition()
+            .delay(2000)
+            .duration(1000)
+            .attr("opacity", 1);
+
+        // título gráfico
+
+        $SVG.append("text")
+            .attr("class", "titulo-eixo-var")
+            .attr("opacity", 0)
+            .attr("y", PAD - 20)
+            .attr("x", 30)
+            .attr("text-anchor", "middle")
+            .text("Variação")
+            .append("tspan")
+            .text("acumulada")
+            .attr("x", 30)
+            .attr("dy", "1em");
+
+        $SVG.select("text.titulo-eixo-var")
             .transition()
             .delay(2000)
             .duration(1000)
