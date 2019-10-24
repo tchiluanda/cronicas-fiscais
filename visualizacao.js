@@ -12,7 +12,8 @@ d3.csv("dados.csv", function(d) {
         tipo_despesa: d.tipo_despesa,
         vlr_var: +d.valor_variacao,
         vlr_dif: +d.valor_diferenca,
-        vlr_acu: +d.valor_acumulado
+        vlr_acu: +d.valor_acumulado,
+        vlr_part: +d.participacao
     }
 }).then(function(dados) {
 
@@ -133,7 +134,11 @@ d3.csv("dados.csv", function(d) {
     let formataBR_1casa = d3.formatDefaultLocale(localeBrasil).format(",.1f");
     let formataData = d3.timeFormat("%b %Y");
 
-    console.log("Periodo formatado:", formataData(PERIODO[0]));
+    const primeira_data = formataData(PERIODO[0]);
+
+    const ultima_data = formataData(PERIODO[1])
+
+    console.log("Periodo formatado:", primeira_data, ultima_data);
 
     const switch_step = function(step) {
         d3.selectAll(".steps li").classed("active", false);
@@ -207,7 +212,7 @@ d3.csv("dados.csv", function(d) {
                                      .attr("text-anchor", "middle")
                                      .attr("y", scale_ABSOLUTO(0) + 25)
                                      .attr("x", w*1/4 + 7.5)
-                                     .text("Dez 2010");
+                                     .text(primeira_data);
 
 
 
@@ -262,7 +267,7 @@ d3.csv("dados.csv", function(d) {
                                      .attr("text-anchor", "middle")
                                      .attr("y", scale_ABSOLUTO(0) + 25)
                                      .attr("x", w*3/4 + 7.5)
-                                     .text("Jul 2019");
+                                     .text(ultima_data);
 
 
     };
