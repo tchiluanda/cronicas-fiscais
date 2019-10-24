@@ -13,7 +13,8 @@ d3.csv("dados.csv", function(d) {
         vlr_var: +d.valor_variacao,
         vlr_dif: +d.valor_diferenca,
         vlr_acu: +d.valor_acumulado,
-        vlr_part: +d.participacao
+        vlr_part: +d.participacao,
+        vlr_part_ajus: d.tipo_despesa == "obrigatoria" ? 100.0 : +d.participacao
     }
 }).then(function(dados) {
 
@@ -76,6 +77,11 @@ d3.csv("dados.csv", function(d) {
         .range([h - PAD, PAD])
         .domain(AMPLITUDE_VLR_VARIACAO);
 
+    const scale_PARTICIP = d3
+        .scaleLinear()
+        .range([h - PAD, PAD])
+        .domain([0, 100]);
+
     const scale_COLOR = d3
         .scaleOrdinal()
         .range(["#FFE93B", "#ff2190"])
@@ -87,16 +93,24 @@ d3.csv("dados.csv", function(d) {
         .domain(["discricionaria", "obrigatoria"]);
          
     const eixo_y_abs = d3.axisLeft()
-                .scale(scale_ABSOLUTO)
-                .tickFormat(d => formataBR(d/1e3));
+        .scale(scale_ABSOLUTO)
+        .tickFormat(d => formataBR(d/1e3));
+
+    const eixo_y_part = d3.axisLeft()
+        .scale(scale_PARTICIP)
+        .tickFormat(function(d) {return formataBR(d)+"%"});                                  
 
     const eixo_y_var = d3.axisLeft()
-                .scale(scale_VARIACAO)
-                .tickFormat(function(d) {return formataBR((d-1)*100)+"%"});                  
+        .scale(scale_VARIACAO)
+        .tickFormat(function(d) {return formataBR((d-1)*100)+"%"});                  
 
     const eixo_x_data = d3.axisBottom()
-                .scale(scale_X_PERIODO)
-                .tickFormat(d => formataData(d));
+        .scale(scale_X_PERIODO)
+        .tickFormat(d => formataData(d));
+
+    const line_acum = d3.line()
+        .x(d => scale_X_PERIODO(d.periodo))
+        .y(d => scale_ABSOLUTO(d.vlr_acu));
     
     console.log("Teste escala absoluta: ", 
                 dados[1].vlr_acu,
@@ -452,9 +466,7 @@ d3.csv("dados.csv", function(d) {
        
         // create line
 
-        const line_acum = d3.line()
-            .x(d => scale_X_PERIODO(d.periodo))
-            .y(d => scale_ABSOLUTO(d.vlr_acu));
+        // função line_acum definida lá em cima
         
         const v_linha_obrig = $SVG.append("path")
                     .datum(dados_obrig)
@@ -532,8 +544,119 @@ d3.csv("dados.csv", function(d) {
         
     }
 
-    // // // Step 6 - Valores relativos
+    // step 6 - área participação
+
     const render_step6 = function() {
+
+        botao_ativo(4000);
+
+        // remove os pontos / rects
+        $SVG.selectAll("rect.layer-step3-pontos")
+            .transition()
+            .duration(1000)
+            .attr('width', 0)
+            .attr('height', 0)
+            .remove();
+
+        // função da area participação
+        const area_participacao = d3.area()
+            .x(d => scale_X_PERIODO(d.periodo))
+            .y1(d => scale_PARTICIP(d.vlr_part_ajus))
+            .y0(scale_PARTICIP(0));
+
+        //pega a cor de fundo
+        const cor_de_fundo = d3.select("body").style("background-color");
+
+        $SVG.selectAll("path.line")
+            .attr('stroke-dasharray', null)
+            .attr('stroke-dashoffset', null)
+            .attr('fill', cor_de_fundo)
+            .attr("stroke-width", 3)
+            .transition()
+            .duration(500)
+            .attr("stroke-width", 0.5)
+            .transition()
+            .delay(500)
+            .duration(2000)
+            .attr("fill", function() { return this.getAttribute("stroke");})
+            .attr("d", area_participacao);
+
+       $SVG.select("g.y-axis")
+            .transition()
+            .delay(500)
+            .duration(3000)
+            .call(eixo_y_part);
+
+       $SVG.select("text.titulo-eixo")
+           .transition()
+           .delay(1000)
+           .duration(2000)
+           .attr("opacity", 0)
+
+       // título gráfico
+
+       $SVG.append("text")
+           .attr("class", "titulo-eixo titulo-eixo-part")
+           .attr("opacity", 0)
+           .attr("y", PAD - 25)
+           .attr("x", 30)
+           .attr("text-anchor", "middle")
+           .text("Percentual")
+           .append("tspan")
+           .text("do total")
+           .attr("x", 30)
+           .attr("dy", "1em");
+
+       $SVG.select("text.titulo-eixo-part")
+           .transition()
+           .delay(2000)
+           .duration(1000)
+           .attr("opacity", 1);
+        
+    }
+
+    // volta ao normal
+
+    const render_step7 = function() {
+
+        botao_ativo(3000);
+
+        $SVG.selectAll("path.line")
+            .transition()
+            .duration(2000)
+            .attr("fill", "none")
+            .attr("stroke-width", 3)
+            .attr("d", line_acum);     
+            
+        $SVG.select("g.y-axis")
+            .transition()
+            .duration(3000)
+            .call(eixo_y_abs);
+
+        $SVG.select("text.titulo-eixo-part")
+            .transition()
+            .duration(1000)
+            .attr("opacity", 0)
+            .remove()
+
+        // título gráfico
+
+        $SVG.append("text")
+            .attr("class", "titulo-eixo")
+            .attr("opacity", 0)
+            .attr("y", PAD - 20)
+            .attr("x", 30)
+            .attr("text-anchor", "middle")
+            .text("R$ mi")
+            .transition()
+            .delay(1000)
+            .duration(1000)
+            .attr("opacity", 1);
+    
+    }
+
+    // // // Step 8 - Valores relativos
+    const render_step8 = function() {
 
         botao_ativo(3100);
         
@@ -566,15 +689,16 @@ d3.csv("dados.csv", function(d) {
 
         $SVG.select("g.y-axis")
              .transition()
-             .delay(1000)
-             .duration(2000)
+             .delay(0000)
+             .duration(3000)
              .call(eixo_y_var);
 
-        $SVG.select("text.titulo-eixo")
+        $SVG.selectAll("text.titulo-eixo")
             .transition()
             .delay(1000)
             .duration(2000)
             .attr("opacity", 0)
+            .remove()
 
         $SVG.selectAll("circle")
             .data(dados_final)
@@ -678,7 +802,13 @@ d3.csv("dados.csv", function(d) {
             break;
         case "6":
             render_step6();
-            break;                
+            break;   
+        case "7":
+            render_step7();
+            break;   
+        case "8":
+            render_step8();
+            break;                          
         }
         
         console.log("Step atual:", step_atual);
