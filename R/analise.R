@@ -33,7 +33,9 @@ serie <- tabela %>%
   filter(Periodo >= "2010-01-01") %>%
   mutate(DespObrig = DespTotal - DespDiscr) %>%
   mutate_at(vars(starts_with("Desp")), .funs = list( # para preservar as variáveis originais
-    ac12m = ~zoo::rollapply(., width = 12, FUN = sum, fill = NA, align = 'right')))
+    ac12m = ~zoo::rollapply(., width = 12, FUN = sum, fill = NA, align = 'right'))) %>%
+  mutate(partObrig = 100*DespObrig_ac12m / DespTotal_ac12m,
+         partDiscr = 100*DespDiscr_ac12m / DespTotal_ac12m)
 
 serie_bolhas <- serie %>%
   filter(!is.na(DespDiscr_ac12m), Mes == 12) %>%
@@ -50,9 +52,17 @@ serie_acum <- serie %>%
          obrigatoria    = DespObrig_ac12m) %>%
   arrange(Periodo)
 
+serie_part <- serie %>%
+  filter(!is.na(DespDiscr_ac12m)) %>%
+  select(Periodo, 
+         discricionaria = partDiscr, 
+         obrigatoria    = partObrig) %>%
+  arrange(Periodo) %>%
+  gather(discricionaria, obrigatoria, key = tipo_despesa, value = participacao)
+
 serie_valores <- serie_acum %>%
   gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_acumulado)
-  
+
 serie_variacao <- serie_acum %>%
   mutate_at(vars(-Periodo), .funs = ~./.[1]) %>%
   gather(discricionaria, obrigatoria, key = tipo_despesa, value = valor_variacao)
@@ -60,6 +70,7 @@ serie_variacao <- serie_acum %>%
 serie_plot <- serie_variacao %>%
   left_join(serie_bolhas) %>%
   left_join(serie_valores) %>%
+  left_join(serie_part) %>%
   arrange(Periodo)
 
 plot_completo <- ggplot(serie_plot, 
@@ -71,6 +82,10 @@ plot_completo <- ggplot(serie_plot,
   geom_text(aes(label = round(valor_diferenca/1000,0)), size = 3, color = "white") +
   scale_size(range = c(5, 20)) +
   theme_minimal()
+
+plot_participacao <- ggplot(serie_plot,
+                            aes(x = Periodo, y = participacao, fill = tipo_despesa)) +
+  geom_area()
 
 ggsave(plot_completo, filename = "esboco_vis.png", type = "cairo-png")
 
