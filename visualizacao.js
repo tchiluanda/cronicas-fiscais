@@ -17,7 +17,7 @@ d3.csv("dados.csv", function(d) {
 }).then(function(dados) {
 
     // define uma variável geral para controlar os passos
-    let step_atual = 1;
+    let step_atual = 0;
 
     // testes para entender a estrutura dos dados
 
@@ -627,7 +627,7 @@ d3.csv("dados.csv", function(d) {
 
     // inicio fluxo
     
-    let layer_step1 = render_step1();
+    // let layer_step1 = render_step1();
 
     d3.selectAll("#botao-proximo")
       .on("click", function(){
@@ -657,9 +657,6 @@ d3.csv("dados.csv", function(d) {
 
         switch (""+step_atual) {
         case "1":
-            if (step_anterior > step_atual) {
-                $SVG.selectAll(".layer-step2").remove()
-            }
             render_step1();
             break;              
         case "2":

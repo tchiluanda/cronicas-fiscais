@@ -50,12 +50,13 @@ div.narrativa #botao-proximo {
     font-weight: bold;
 
 }
+*/
 
 .proximo-ativo {
     color: #E32C10;
+    font-weight: bold;
     cursor: pointer;
 }
-*/
 
 .proximo-inativo {
     color: slategray;
