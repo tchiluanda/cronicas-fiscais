@@ -44,13 +44,11 @@ div.narrativa {
     font-size: 0.8rem;
 }
 
-/*
 
-div.narrativa #botao-proximo {
-    font-weight: bold;
-
+#botao-proximo {
+    text-decoration: none;
 }
-*/
+
 
 .proximo-ativo {
     color: #E32C10;
