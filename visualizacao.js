@@ -318,6 +318,7 @@ d3.csv("dados.csv", function(d) {
             var x0 = w*1/4 - 16;
             var xend = w*1/4 + 16
             var x_comentario = w*1/4 + 40;
+            var alinhamento = "left";
             var layer = "layer3";
             console.log("dentro if", inicial_ou_final, altura, y_0);
         } else {
@@ -326,9 +327,19 @@ d3.csv("dados.csv", function(d) {
             var y_0s = y_finais;
             var y_0 = y_final;
             var x0 = w*3/4 - 16;
-            var xend = w*3/4 + 16
-            var x_comentario = w*3/4 + 40;
+            var xend = w*3/4 + 16;
+            var x_comentario = w >= 520 ? w*3/4 + 40 : w*3/4 - 85;
+            var alinhamento = w >= 520 ? "left" : "right";
             var layer = "layer4";
+
+            // note que o comentário começa em w*3/4+40, com 90 de
+            // largura. Então w*3/4 + 40 + 90 tem que ser menor que
+            // "w". Ou seja, w teria que ser pelo menos 520, para a
+            // caixa de comentário não ficar fora da área.
+            // por isso a lógica. se w for menor que 520, então o 
+            // comentário vai ficar `a esquerda.
+            // vou ter que mudar o alinhamer
+
         }
 
         console.log("fora if", inicial_ou_final, altura, y_0);
@@ -412,6 +423,7 @@ d3.csv("dados.csv", function(d) {
 
         d3.select("div.comentarios > #annotation-" + inicial_ou_final)
             .style("left", x_comentario + "px")
+            .style("text-align", alinhamento)
             .style("top", y_0s[1] + "px")
             .classed("invisivel", false)
             .style("opacity", 0)
