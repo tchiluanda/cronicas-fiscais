@@ -109,7 +109,7 @@ d3.csv("dados.csv", function(d) {
         .scale(scale_VARIACAO)
         .tickFormat(function(d) {return formataBR((d-1)*100)+"%"});                  
 
-    const eixo_x_data = d3.axisBottom()
+    let eixo_x_data = d3.axisBottom()
         .scale(scale_X_PERIODO)
 
     const line_acum = d3.line()
@@ -474,6 +474,8 @@ d3.csv("dados.csv", function(d) {
 
         const height_final = 16;
         const width_final  = 16;
+
+        // // transforma rects
 
         const layer_step3 = $SVG.selectAll("rect")
                                 .attr("class", "layer-step3-pontos")
