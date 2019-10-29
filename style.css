@@ -33,7 +33,23 @@ section#vis {
 
 section#vis h1 {
     text-align: center;
-    color: #E32C10;
+    font-size: 3rem;
+    color: #444; /*#E32C10;*/
+    line-height: 1.3
+}
+
+/* fiz isso aqui abaixo para o highlight ficar um pouco mais estreito */
+
+section#vis h1 span.obrig{
+    display: inline-block;
+    background-color: #ff2190;
+    line-height: 1.15;
+}
+
+section#vis h1 span.discr{
+    display: inline-block;
+    background-color: #FFE93B;
+    line-height: 1.15;
 }
 
 div.narrativa {
