@@ -6,6 +6,8 @@ const PAD = 40;
 
 console.log("Estou aqui.")
 
+// // read data
+
 d3.csv("dados.csv", function(d) {
     return {
         periodo: d3.timeParse("%Y-%m-%d")(d.Periodo),
@@ -35,6 +37,9 @@ d3.csv("dados.csv", function(d) {
     const AMPLITUDE_VLR_ABSOLUTO = [0, d3.max(dados, d => d.vlr_acu)];
     const AMPLITUDE_VLR_VARIACAO = d3.extent(dados, d => d.vlr_var);
     const AMPLITUDE_VLR_DIF      = d3.extent(dados, d => d.vlr_dif);
+
+    // // captura a largura do container do gráfico
+    // // que vai determinar a largura do svg
 
     const w = $grafico_container.node().offsetWidth;
     console.log("Largura do container: ", w);
@@ -106,11 +111,18 @@ d3.csv("dados.csv", function(d) {
 
     const eixo_x_data = d3.axisBottom()
         .scale(scale_X_PERIODO)
-        .tickFormat(d => formataData(d));
 
     const line_acum = d3.line()
         .x(d => scale_X_PERIODO(d.periodo))
         .y(d => scale_ABSOLUTO(d.vlr_acu));
+
+    // // se a largura não for suficiente,
+    // // usa apenas os anos nos ticks
+
+    if (w < 520)
+        eixo_x_data = eixo_x_data.tickFormat(d => formataData_Anos(d));
+    else
+        eixo_x_data = eixo_x_data.tickFormat(d => formataData(d));
     
     console.log("Teste escala absoluta: ", 
                 dados[1].vlr_acu,
@@ -147,6 +159,7 @@ d3.csv("dados.csv", function(d) {
     let formataBR = d3.formatDefaultLocale(localeBrasil).format(",.0f");
     let formataBR_1casa = d3.formatDefaultLocale(localeBrasil).format(",.1f");
     let formataData = d3.timeFormat("%b %Y");
+    let formataData_Anos = d3.timeFormat("%Y");
 
     const primeira_data = formataData(PERIODO[0]);
 
