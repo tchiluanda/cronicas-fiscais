@@ -661,18 +661,19 @@ d3.csv("dados.csv", function(d) {
 
     const render_step7 = function() {
 
-        botao_ativo(3000);
+        botao_ativo(2000);
 
         $SVG.selectAll("path.line")
             .transition()
             .duration(2000)
             .attr("fill", "none")
             .attr("stroke-width", 3)
-            .attr("d", line_acum);     
+            .attr("d", line_acum);
+
             
         $SVG.select("g.y-axis")
             .transition()
-            .duration(3000)
+            .duration(2000)
             .call(eixo_y_abs);
 
         $SVG.select("text.titulo-eixo-part")
