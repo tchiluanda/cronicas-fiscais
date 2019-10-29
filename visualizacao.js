@@ -26,8 +26,8 @@ d3.csv("dados.csv", function(d) {
     // testes para entender a estrutura dos dados
 
     //console.log(dados);
-    console.log(Object.keys(dados[1]));
-    console.table(dados);
+    //console.log(Object.keys(dados[1]));
+    //console.table(dados);
     //console.table(dados[1]);
     //console.log(dados[1].Periodo);
     //console.log(d3.extent(dados, d => d.Periodo));
@@ -36,7 +36,12 @@ d3.csv("dados.csv", function(d) {
     const PERIODO = d3.extent(dados, d => d.periodo);
     const AMPLITUDE_VLR_ABSOLUTO = [0, d3.max(dados, d => d.vlr_acu)];
     const AMPLITUDE_VLR_VARIACAO = d3.extent(dados, d => d.vlr_var);
-    const AMPLITUDE_VLR_DIF      = d3.extent(dados, d => d.vlr_dif);
+    const min_dif      = d3.min(dados, d => d.vlr_dif);
+    const max_dif      = d3.max(dados, d => d.vlr_dif);
+
+    // maior valor de diferença, seja negativo ou positivo:
+    const max_dif_abs  = d3.max(dados, d => Math.abs(d.vlr_dif));
+
 
     // // captura a largura do container do gráfico
     // // que vai determinar a largura do svg
@@ -50,11 +55,10 @@ d3.csv("dados.csv", function(d) {
     const FRST_DATE = d3.min(dados, d => d.periodo);
 
     console.log("Última data: ", LAST_DATE);
-
     console.log("Amplitude período: ",         PERIODO);
     console.log("Amplitude valor absoluto: ",  AMPLITUDE_VLR_ABSOLUTO);
     console.log("Amplitude valor relativo: ",  AMPLITUDE_VLR_VARIACAO);
-    console.log("Amplitude valor diferença: ", AMPLITUDE_VLR_DIF);
+    console.log("amplitude diferenças", min_dif, max_dif, "Máxima diferença", max_dif_abs);
 
     const scale_X_PERIODO = d3
         .scaleTime()
@@ -62,10 +66,9 @@ d3.csv("dados.csv", function(d) {
         .range([PAD, w - PAD])
 
     const scale_DIFERENCA = d3
-        .scalePow()
-        .exponent(0.5)
-        .range([0, 80])
-        .domain(AMPLITUDE_VLR_DIF);
+        .scaleSqrt()
+        .range([0, 35])
+        .domain([0, max_dif_abs]);
 
     const scale_ABSOLUTO = d3
         .scaleLinear()
@@ -96,6 +99,10 @@ d3.csv("dados.csv", function(d) {
         .scaleOrdinal()
         .range(["#B3A017", "#B30C5F"])
         .domain(["discricionaria", "obrigatoria"]);
+
+    const scale_COLOR_dif = d3.scaleLinear()
+        .domain([true, false])
+        .range(["#2c7bb6", "#d7191c"]);
          
     const eixo_y_abs = d3.axisLeft()
         .scale(scale_ABSOLUTO)
@@ -130,25 +137,33 @@ d3.csv("dados.csv", function(d) {
                 scale_ABSOLUTO(dados[1].vlr_acu),
                 "pixels.");
 
-    // subsets dos dados
+    // //subsets dos dados
     const dados_inici = dados.filter(d => d.periodo <= FRST_DATE);
     const dados_final = dados.filter(d => d.periodo >= LAST_DATE);
     const dados_obrig = dados.filter(d => d.tipo_despesa == "obrigatoria");
     const dados_discr = dados.filter(d => d.tipo_despesa == "discricionaria");
     const dados_extremos = dados.filter(d => d.periodo >= LAST_DATE |
         d.periodo <= FRST_DATE);
+    const dados_dif = dados.filter(d => !isNaN(d.vlr_dif));
 
-    console.log("Dados extremos:")
-    console.table(dados_extremos);
+    console.log("Teste escalas difs");
+    console.table(dados_dif.map(d => [d.vlr_dif, scale_DIFERENCA(Math.abs(d.vlr_dif)), scale_COLOR_dif(d.vlr_dif<0)]));
 
-    // grab svg reference
+    //console.log("Dados extremos:")
+    //console.table(dados_extremos);
+    console.log("Dados diferença: ");
+    console.table(dados_dif);
+
+    
+
+    // // grab svg reference
     const $SVG = d3.select(".grafico-d3-svg")
                    .attr("width", w)
                    .attr("height", h);
 
-    // // funcoes 
+    // // // funcoes 
 
-    // formatação valores
+    // // formatação valores
     
     let localeBrasil = {
         "decimal": ",",
@@ -780,7 +795,56 @@ d3.csv("dados.csv", function(d) {
             .attr("opacity", 1);
       }
 
+    // // // Step 9 - Valores mensais
 
+    const render_step9 = function() {
+
+        botao_ativo(500+dados_dif.length*500+1000+1000);
+
+        const circulos_step9 = $SVG.selectAll("circle.step9")
+            .data(dados_dif)
+            .enter()
+            .append("circle")
+            .classed("step9", true)
+            .attr("cx", d => scale_X_PERIODO(d.periodo))
+            .attr("cy", d => scale_VARIACAO(d.vlr_var))
+            .attr("r", 0)
+            .attr("fill", d => scale_COLOR(d.tipo_despesa))
+            .transition()
+            .duration(500)
+            .attr("r", 5)
+
+        circulos_step9
+            .transition()
+            .delay((d,i) => 500 + i*500)
+            .duration(1000)
+            .attr("r", d => scale_DIFERENCA(Math.abs(d.vlr_dif)))
+            .attr("fill", d => scale_COLOR_dif(d.vlr_dif<0));
+        
+        // textos
+
+        $SVG.selectAll("text.step9")
+        .data(dados_dif)
+        .enter()
+        .append("text")
+        .attr("opacity", "0")
+        .classed("step9", true)
+        .classed("texto-circulos-step9", true)
+        .attr("y", d => scale_VARIACAO(d.vlr_var))
+        .attr("x", d => scale_X_PERIODO(d.periodo))
+        .attr("text-anchor", "middle")
+        .text(d => (d.vlr_dif>0 ? "+" : "") + formataBR(d.vlr_dif/1000))
+        .attr("fill", "#FCFBFA")
+        .transition()
+        .delay((d,i) => 500 + i*500)
+        .duration(1000)
+        .attr("opacity", 1);
+
+
+
+        
+
+    }
     // inicio fluxo
     
     // let layer_step1 = render_step1();
@@ -835,7 +899,10 @@ d3.csv("dados.csv", function(d) {
             break;   
         case "8":
             render_step8();
-            break;                          
+            break;    
+        case "9":
+            render_step9();
+            break;                         
         }
         
         console.log("Step atual:", step_atual);

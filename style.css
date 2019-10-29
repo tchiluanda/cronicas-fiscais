@@ -107,7 +107,14 @@ div.narrativa {
 }
 
 .label-valores-linha {
+    font-family: 'Merriweather Sans', sans-serif;
     font-size: 0.7rem;
+}
+
+.texto-circulos-step9 {
+    font-family: 'Merriweather Sans', sans-serif;
+    font-size: 10px;
+    alignment-baseline: central;
 }
 
 .label-inicial {
