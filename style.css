@@ -43,12 +43,16 @@ section#vis h1 {
 section#vis h1 span.obrig{
     display: inline-block;
     background-color: #ff2190;
+    /*background: linear-gradient(to top, #ff2190 35%, transparent 100%);*/
     line-height: 1.15;
 }
 
+
+
 section#vis h1 span.discr{
     display: inline-block;
-    background-color: #FFE93B;
+    background-color: #FFE93B; 
+    /*background: linear-gradient(to top, #FFE93B 35%, transparent 100%);*/
     line-height: 1.15;
 }
 
