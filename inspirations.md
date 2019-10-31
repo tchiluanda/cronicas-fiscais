@@ -41,3 +41,7 @@ Transformar num scroller depois?
 * https://github.com/pbeshai/d3-interpolate-path
 
 * https://gist.github.com/mbostock/3916621#file-index-html
+
+# Detalhes de design
+
+* Destaque dos textos: https://lynnandtonic.com/web/
