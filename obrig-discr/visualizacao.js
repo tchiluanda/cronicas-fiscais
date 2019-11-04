@@ -1,6 +1,7 @@
 const $grafico = d3.select('.grafico-d3');
 const $grafico_container = d3.select('.grafico-d3-container');
 const $svg     = $grafico.select('.grafico-d3-svg');
+const $botao_proximo = d3.select("#botao-proximo");
 
 const PAD = 40;
 
@@ -193,8 +194,8 @@ d3.csv("dados.csv", function(d) {
 
     const botao_ativo = function(espera) {
         d3.select("#botao-proximo").classed("proximo-inativo", false);
-        d3.select("#botao-proximo").style("color", "slategray").style("font-weight", "normal").style("cursor", "auto");
-        d3.select("#botao-proximo").transition().delay(espera).style("color", "#E32C10").style("font-weight", "bold").style("cursor", "pointer");
+        d3.select("#botao-proximo").style("color", "slategray").style("font-weight", "normal").style("cursor", "auto").style("pointer-events", "none");
+        d3.select("#botao-proximo").transition().delay(espera).style("color", "#E32C10").style("font-weight", "bold").style("cursor", "pointer").style("pointer-events", "auto");
     }
     
     // // // Step 1 - Barras iniciais
