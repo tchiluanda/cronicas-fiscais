@@ -7,7 +7,7 @@ library(tidyverse)
 recurso_TT <- resource_show(id="527ccdb1-3059-42f3-bf23-b5e3ab4c6dc6",
                              url="https://apickan.tesouro.gov.br/ckan")
 download.file(recurso_TT$url, destfile = "./rtn.xlsx", mode = 'wb' )
-tabela <- read_excel("rtn.xlsx", sheet = "1.1", skip = 4)
+tabela <- read_excel("obrig-discr/rtn.xlsx", sheet = "1.1", skip = 4)
 
 
 # processa dados ----------------------------------------------------------
