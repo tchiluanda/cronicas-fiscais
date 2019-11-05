@@ -187,10 +187,11 @@ d3.csv("dados.csv", function(d) {
         d3.selectAll(".steps li").classed("active", false);
         d3.select("#step-" + step).classed("active", true);
 
+        // troca texto da caixa
         d3.selectAll(".textos-steps").classed("oculto", true);       
         d3.select("#texto-step-" + step).classed("oculto", false);
     }
-
+    
     /*const botao_inativo = function() {
         d3.select("#botao-proximo").classed("proximo-inativo", true);
     }*/
@@ -882,6 +883,7 @@ d3.csv("dados.csv", function(d) {
 
         switch (""+step_atual) {
         case "1":
+            d3.select("#botao-proximo #parte-texto").text("Próximo")
             render_step1();
             break;              
         case "2":
@@ -906,8 +908,18 @@ d3.csv("dados.csv", function(d) {
             render_step8();
             break;    
         case "9":
+            d3.select("#botao-proximo #parte-texto").text("Reiniciar")
+            d3.select("#botao-proximo #parte-simbolo").text("↺")
             render_step9();
-            break;                         
+            break; 
+        case "10":
+            $SVG.selectAll("*").remove();
+            d3.select("#botao-proximo #parte-texto").text("Próximo");
+            d3.select("#botao-proximo #parte-simbolo").text("»")
+            step_atual = 1; 
+            switch_step(step_atual);
+            render_step1();
+            break;
         }
         
         console.log("Step atual:", step_atual);
