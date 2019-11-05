@@ -70,6 +70,10 @@ div.narrativa {
     font-size: 0.8rem;
 }
 
+div.narrativa .texto-steps {
+    line-height: 1.5;
+}
+
 
 #botao-proximo {
     text-decoration: none;
@@ -230,4 +234,8 @@ div.narrativa {
 
 .invisivel {
     opacity: 0;
+}
+
+.oculto {
+    display: none;
 }

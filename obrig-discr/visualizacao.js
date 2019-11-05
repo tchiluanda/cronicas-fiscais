@@ -186,6 +186,9 @@ d3.csv("dados.csv", function(d) {
     const switch_step = function(step) {
         d3.selectAll(".steps li").classed("active", false);
         d3.select("#step-" + step).classed("active", true);
+
+        d3.selectAll(".textos-steps").classed("oculto", true);       
+        d3.select("#texto-step-" + step).classed("oculto", false);
     }
 
     /*const botao_inativo = function() {
