@@ -25,9 +25,10 @@ header img.logo-tt {
     top: 20px;*/
 }
 
-section#abertura, section.vis, section.prose {
+main {
     max-width: 680px;
     margin: 0 auto;
+    padding: 0 5px;
     font-family: 'Merriweather', serif;
 }
 
