@@ -1,8 +1,20 @@
-# Conteúdo: 
+# As despesas obrigatórias e discricionárias da União
 
-Esta matéria:
+Seja bem-vinda(o)!
 
-## Secretário do Tesouro leva os principais números fiscais do Brasil para deputados
+Este repositório contém os dados e códigos utilizados para a produção da página https://tchiluanda.github.io/cronicas-fiscais/obrig-discr/. Todo o trabalho foi desenvolvido com o uso de software livre.
+
+A preparação e análise inicial dos dados foi feita em `R` (o código está disponível na pasta `\R`). A página em si foi programada utilizando apenas os padrões abertos da web, e a visualização foi feita com `D3`, uma biblioteca de javascript que permite manipular páginas web a partir de dados.
+
+Os dados utilizados foram os da série história do Resultado do Tesouro Nacional, disponíveis [nesta página do Tesouro Transparente](http://www.tesourotransparente.gov.br/ckan/dataset/resultado-do-tesouro-nacional). Especificamente, utilizamos os dados da planilha 1.1 &mdash; "Tabela 1.1. Resultado Primário do Governo Central (Valores Correntes)", considerando os valores acumulados nos 12 meses anteriores ao mês de referência.
+
+## Inspirações
+
+### Conteúdo: 
+
+Esta matéria, na Intranet do Tesouro Nacional:
+
+#### Secretário do Tesouro leva os principais números fiscais do Brasil para deputados
 
 __Rosana Mendes Alves Lobo__
 
@@ -22,7 +34,7 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 
 *Fonte: ASCOM/STN*
 
-# Forma:
+### Forma:
 
 * https://archive.nytimes.com/www.nytimes.com/interactive/2012/05/17/business/dealbook/how-the-facebook-offering-compares.html?_r=0
 
@@ -30,9 +42,11 @@ Participaram da conversa com o secretário os deputados Sergio Souza (MDB-PR), q
 
 * http://arnicas.github.io/interactive-vis-course/Week12/
 
+* https://vallandingham.me/stepper_steps.html
+
 Transformar num scroller depois?
 
-# Efeitos, D3 etc.
+### Efeitos, D3 etc.
 
 * https://medium.com/@sahilaug/line-graphs-using-d3-animating-the-line-f82a1dfc3c91
 
@@ -42,6 +56,6 @@ Transformar num scroller depois?
 
 * https://gist.github.com/mbostock/3916621#file-index-html
 
-# Detalhes de design
+### Detalhes de design
 
 * Destaque dos textos: https://lynnandtonic.com/web/
