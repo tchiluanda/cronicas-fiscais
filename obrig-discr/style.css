@@ -62,6 +62,29 @@ section.prose {
     line-height: 1.5;
 }
 
+section.prose p.nota {
+    font-family: "Merriweather Sans";
+    font-size: 0.7rem;
+    color: #888;
+}
+
+section.prose p.nota a {
+    text-decoration: none;
+    border-bottom: 1px solid #888;
+}
+
+section.prose p.nota a:visited {
+    color: #888;
+    text-decoration: none;
+    border-bottom: 1px solid #888;
+}
+
+section.prose p.nota a:hover{
+    color: #FCFBFA;
+    background-color: #888;
+
+}
+
 
 div.narrativa {
     background: rgba(255,255,255,.85);
@@ -240,3 +263,4 @@ div.narrativa .textos-steps {
 .oculto {
     display: none;
 }
+
